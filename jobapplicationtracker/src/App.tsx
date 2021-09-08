@@ -9,20 +9,18 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom';
 function App() {
   function createSignUpPage(): JSX.Element {
     return (
-      <SignUpPage fullName="" username="" email="" password="" confirmedPassword=""/>
+      <SignUpPage username="" email="" password="" confirmedPassword=""/>
     );
   }
 
   return (
-    <div className="App">
-      <header className="App-header">
+    <div>
         <BrowserRouter>
            <Switch>
              <Route path={RoutePath.signup} component={ () => createSignUpPage() } />
              <Route path={RoutePath.home} component={ () => createSignUpPage() } />
            </Switch>
         </BrowserRouter>
-      </header>
     </div>
   );
 }
