@@ -35,6 +35,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "test:unittests": "mocha -r ts-node/register ./src/tests/unittests/*/*.ts",
+    "test:uitests": "jest ./src/tests/uitests/*.ts",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {

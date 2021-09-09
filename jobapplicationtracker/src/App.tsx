@@ -5,13 +5,9 @@ import SignUpPage from './components/signup/SignUpPage';
 import RoutePath from './enums/RoutePath_enum';
 
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import createSignUpPage from './components/signup/createSignUpPage';
 
 function App() {
-  function createSignUpPage(): JSX.Element {
-    return (
-      <SignUpPage username="" email="" password="" confirmedPassword=""/>
-    );
-  }
 
   return (
     <div>
