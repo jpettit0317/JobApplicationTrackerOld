@@ -172,10 +172,10 @@ const SignUpPage: React.FC<SignUpProps> = props => {
 
         const result = await createUser(user);
 
-        console.log("Result after saving is " + result);
+        console.log("Result after saving is " + result.data);
 
-        if (result !== "") {
-            <Alert onClose={() => { }}>{result}</Alert>
+        if (result.status >= 300) {
+            <Alert onClose={() => { }}>{result.reasonForFailure}</Alert>
         }
     };
 
