@@ -4,12 +4,12 @@ import URLPath from "../../enums/URLPath_enum";
 import User from "../../models/User";
 
 async function createUser(user: User): Promise<string> {
-    try {
-        const result: string = await axios.post(URLPath.createUser, user);
+    const result = await axios.post(URLPath.createUser, user);
 
-        return result;
-    } catch(error) {
-        return  `error`;
+    if (result.status >= 400) {
+        return `result.data`;
+    } else {
+        return "";
     }
 }
 

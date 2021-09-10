@@ -172,6 +172,8 @@ const SignUpPage: React.FC<SignUpProps> = props => {
 
         const result = await createUser(user);
 
+        console.log("Result after saving is " + result);
+
         if (result !== "") {
             <Alert onClose={() => { }}>{result}</Alert>
         }
