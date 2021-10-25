@@ -43,6 +43,16 @@ public class User {
                 user.getSession(), user.getUserId());
     }
 
+    public static User createUserFromUserPassword(final User user, final String password) {
+        return User.createUser(user.getUsername(), user.getEmail(), password,
+                user.getSession(), user.getUserId());
+    }
+
+    public static User createUserFromUserPasswordSession(final User user, final String password, final Session session) {
+        return User.createUser(user.getUsername(), user.getEmail(), password,
+                session, user.getUserId());
+    }
+
     public String getUsername() {
         return username;
     }

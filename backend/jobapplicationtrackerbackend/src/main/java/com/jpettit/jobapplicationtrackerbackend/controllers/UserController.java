@@ -1,9 +1,13 @@
 package com.jpettit.jobapplicationtrackerbackend.controllers;
 
 import com.jpettit.jobapplicationtrackerbackend.JobapplicationtrackerbackendApplication;
+import com.jpettit.jobapplicationtrackerbackend.daos.UserDAO;
 import com.jpettit.jobapplicationtrackerbackend.database.JobAppTrackerConnection;
+import com.jpettit.jobapplicationtrackerbackend.helpers.ProjectEnvironment;
 import com.jpettit.jobapplicationtrackerbackend.helpers.UserControllerURL;
+import com.jpettit.jobapplicationtrackerbackend.models.HttpResponse;
 import com.jpettit.jobapplicationtrackerbackend.models.User;
+import com.jpettit.jobapplicationtrackerbackend.models.UserServiceIntPair;
 import com.jpettit.jobapplicationtrackerbackend.services.UserService;
 import javafx.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,13 +24,11 @@ import java.sql.Statement;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.Optional;
 
 @RestController
 public class UserController {
-    @Autowired
-    UserService userService;
-
     @PostConstruct
     public void postConstruct() {
         System.out.println("In post construct at time ");
@@ -35,9 +37,29 @@ public class UserController {
 
     @PostMapping(UserControllerURL.addUser)
     public ResponseEntity<String> addUser(@RequestBody User newUser) {
-        System.out.println("Added user at time .");
-        System.out.println("The new user is " + newUser.toString());
+        System.out.println("In addUser");
+        final UserService service = createUserService();
+        final UserServiceIntPair result = service.createUser(newUser);
 
-        return new ResponseEntity<>("", HttpStatus.CREATED);
+        System.out.println(result.toString());
+        if(!result.getMessage().equals("")) {
+            final HttpResponse<String> response = new HttpResponse<>("", result.getMessage());
+            System.out.println(String.format("The response is %s", response.toString()));
+            return new ResponseEntity<>(response.getErrorMessage(), HttpStatus.NOT_FOUND);
+        } else {
+            final HttpResponse<String> response = new HttpResponse<>("", "");
+            return new ResponseEntity<>(response.getErrorMessage(), HttpStatus.CREATED);
+        }
+    }
+
+    private UserService createUserService() {
+        final Optional<Connection> connection = JobAppTrackerConnection.createConnection();
+        final ProjectEnvironment appEnvironment = JobapplicationtrackerbackendApplication.environment;
+
+        System.out.println(connection.get().toString());
+        System.out.println("The app environment is " + appEnvironment);
+        UserDAO dao = new UserDAO(connection.get(), appEnvironment);
+
+        return new UserService(dao, 12);
     }
 }

@@ -9,9 +9,10 @@ import { Box, Grid, Container, TextField, makeStyles, Button, Typography, CssBas
 import NavBar from "../navbar/NavBar";
 import User from "../../models/User";
 import SignUpErrors from "../../models/SignUpErrors";
-import { ErrorSharp } from "@material-ui/icons";
+import { ErrorSharp, RestoreOutlined } from "@material-ui/icons";
 import createUser from "../../functions/networkCalls/createUser";
 import { Alert } from "@material-ui/lab";
+import HttpResponse from "../../models/HttpResponse";
 
 const SignUpPage: React.FC<SignUpProps> = props => {
     const classes = signUpStyles();
@@ -167,17 +168,32 @@ const SignUpPage: React.FC<SignUpProps> = props => {
         setErrors(errors);
         
         if (areThereErrors()) {
+            console.log("There are errors");
+            console.log(userNameError);
+            console.log(emailError);
+            console.log(passwordError);
+            console.log(confirmPasswordError);
             return;
         }
 
-        const result = await createUser(user);
+        handleCreateUser(user);
+    }
 
-        console.log("Result after saving is " + result.data);
+    const handleCreateUser = async (user: User) => {
+        try {
+            const response = await createUser(user);
 
-        if (result.status >= 300) {
-            <Alert onClose={() => { }}>{result.reasonForFailure}</Alert>
+            console.log(`Response is ${JSON.stringify(response)}`);
+            if (response.status >= 300) {
+                console.log("Creating alert");
+                alert(response.reasonForFailure);
+            } else {
+                return;
+            }
+        } catch (error: any) {
+            console.log("Error in creating httpresponse " + JSON.stringify(error));
         }
-    };
+    }
 
     const setErrors = (errors: SignUpErrors) => {
         setUserNameError(errors.usernameError);
@@ -187,12 +203,13 @@ const SignUpPage: React.FC<SignUpProps> = props => {
     }
 
     const areThereErrors = (): boolean => {
-        if (userNameError === "" && 
-            passwordError === "" 
-            && emailError === "" && confirmPasswordError === "") {
-            return false;
-        } else {
+        if (userNameError !== "" || 
+            passwordError !== "" ||
+            emailError !== ""    || 
+            confirmPasswordError !== "") {
             return true;
+        } else {
+            return false;
         }
     }
 

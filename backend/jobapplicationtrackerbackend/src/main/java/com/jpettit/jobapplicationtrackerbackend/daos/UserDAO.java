@@ -37,6 +37,22 @@ public class UserDAO implements DAO<User> {
         }
     }
 
+    public Optional<User> getByUsername(String userName) {
+        try {
+            final UserQuerier querier = new UserQuerier(environment);
+            final String query = querier.buildGetUserByUsername(userName);
+            Statement statement = jobAppConnection.createStatement();
+            ResultSet set = statement.executeQuery(query);
+
+            final Optional<User> user = buildOptionalUserNoPassword(set);
+
+            return user;
+        } catch(SQLException execption) {
+            System.out.println("Error: " + execption.getMessage());
+            return Optional.empty();
+        }
+    }
+
     private Optional<User> buildOptionalUser(ResultSet set) {
         try {
             if (!set.next()) {
@@ -53,6 +69,27 @@ public class UserDAO implements DAO<User> {
             final Session userSession = Session.createSession(sessionName, expDate);
 
             return Optional.of(User.createUser(userName, email, password, userSession, userId));
+        } catch (SQLException sqlException) {
+            System.out.println("Error: " + sqlException.getMessage());
+            return Optional.empty();
+        }
+    }
+
+    private Optional<User> buildOptionalUserNoPassword(ResultSet set) {
+        try {
+            if (!set.next()) {
+                return Optional.empty();
+            }
+
+            final Long userId = set.getLong(UserFields.userId);
+            final String userName = set.getString(UserFields.userName);
+            final String email = set.getString(UserFields.email);
+            final String sessionName = set.getString(UserFields.sessionName);
+            final LocalDate expDate = set.getDate(UserFields.expDate).toLocalDate();
+
+            final Session userSession = Session.createSession(sessionName, expDate);
+
+            return Optional.of(User.createUser(userName, email, "", userSession, userId));
         } catch (SQLException sqlException) {
             System.out.println("Error: " + sqlException.getMessage());
             return Optional.empty();
@@ -92,6 +129,7 @@ public class UserDAO implements DAO<User> {
     }
 
     private int insertUser(final PreparedStatement statement, final User user) {
+        System.out.println("The user that is being inserted is " + user.toString());
         try {
             final Date sessionExpDate = convertLocalDateToDate(user.getSession().getExpirationDate());
 
@@ -181,5 +219,13 @@ public class UserDAO implements DAO<User> {
         } catch(SQLException sqlException) {
             System.out.println("Error: " + sqlException.getMessage());
         }
+    }
+
+    @Override
+    public String toString() {
+        return "UserDAO{" +
+                "jobAppConnection=" + jobAppConnection +
+                ", environment=" + environment +
+                '}';
     }
 }

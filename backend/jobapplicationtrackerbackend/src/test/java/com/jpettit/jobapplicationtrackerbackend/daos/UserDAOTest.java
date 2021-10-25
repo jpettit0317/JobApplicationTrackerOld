@@ -105,6 +105,40 @@ class UserDAOTest {
            fail();
         }
     }
+
+    @Test
+    public void testGetByUsername_WhenPassedExistingUsername_ShouldReturnUser() {
+        final String testMethodName = "testGetById_WhenPassedInInvalidId_ShouldReturnEmptyOptional";
+        try {
+            users = UserDAOTestHelpers.createDefaultTestUsers();
+            UserDAOTestHelpers.insertManyUsers(testConnection.get(), users);
+
+            for (int i = 0; i < users.size(); i++) {
+                final Optional<User> actualUser = sut.getByUsername(users.get(i).getUsername());
+
+                UserDAOTestHelpers.assertUserIsNotNull(actualUser);
+            }
+        } catch (Exception e) {
+            System.out.println("Error in " + testMethodName + " " + e.getMessage());
+            fail();
+        }
+    }
+
+    @Test
+    public void testGetByUsername_WhenPassedNonExistingUsername_ShouldReturnNull() {
+        final String testMethodName = "testGetById_WhenPassedInInvalidId_ShouldReturnEmptyOptional";
+        try {
+            users = UserDAOTestHelpers.createDefaultTestUsers();
+            UserDAOTestHelpers.insertManyUsers(testConnection.get(), users);
+
+            final Optional<User> actualUser = sut.getByUsername(UserDAOTestHelpers.newUser.getUsername());
+
+            UserDAOTestHelpers.assertUserShouldBeNull(actualUser);
+        } catch (Exception e) {
+            System.out.println("Error in " + testMethodName + " " + e.getMessage());
+            fail();
+        }
+    }
 //
     @Test
     public void testGetAll_ShouldReturnAllUsers() {

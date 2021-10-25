@@ -1,7 +1,10 @@
 package com.jpettit.jobapplicationtrackerbackend.models;
 
+import javafx.util.converter.LocalDateStringConverter;
+
 import java.time.LocalDate;
 import java.util.Objects;
+import java.util.UUID;
 
 public class Session {
     private final String sessionName;
@@ -14,6 +17,12 @@ public class Session {
 
     public static Session createSession(String sessionName, LocalDate expirationDate) {
         return new Session(sessionName, expirationDate);
+    }
+
+    public static Session createSessionWithExpDateTomorrow(String sessionName) {
+        final LocalDate nextDay = LocalDate.now().plusDays(1);
+
+        return new Session(sessionName, nextDay);
     }
 
     public String getSessionName() {

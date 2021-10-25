@@ -5,13 +5,16 @@ import User from "../../models/User";
 import HttpResponse from "../../models/HttpResponse";
 
 async function createUser(user: User): Promise<HttpResponse<string>> {
-    const result = await axios.post(URLPath.createUser, user);
-    const dataAsString: string = result.data;
+    console.log("Making createUser request");
+    console.log("The user is " + JSON.stringify(user)); 
+    try {
+        const response = await axios.post(URLPath.createUser, user);
+        return new HttpResponse<string>(response.status, "", response.data);
+    } catch(error: any) {
+        const statusCode = Number(error.response.status);
+        const reasonForFailure = String(error.response.data);
 
-    if (result.status >= 400) {
-        return new HttpResponse<string>(result.status, dataAsString, "");
-    } else {
-        return new HttpResponse<string>(result.status, "", dataAsString);
+        return new HttpResponse<string>(statusCode, reasonForFailure, "");
     }
 }
 

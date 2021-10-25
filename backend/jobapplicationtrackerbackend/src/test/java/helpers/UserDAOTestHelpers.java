@@ -24,7 +24,8 @@ public class UserDAOTestHelpers {
            "p1",
            Session.createSession("invalidSession", LocalDate.of(2000, 1, 1)),
            3L);
-
+   public static final User newUser = User.createUser("u3", "e3", "p1",
+           Session.createSession("s1", LocalDate.of(2000, 1, 1)), 4L);
    public static void assertSavedUserIsCorrect(TestPair<Optional<User>> userPair, TestPair<Integer> countPair) {
       assertUserIsEqual(userPair);
       assertUserCountIsEqual(countPair);

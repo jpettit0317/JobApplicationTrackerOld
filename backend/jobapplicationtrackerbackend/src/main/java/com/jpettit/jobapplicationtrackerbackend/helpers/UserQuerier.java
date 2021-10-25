@@ -29,6 +29,13 @@ public class UserQuerier extends Querier {
                 + " FROM " + tableName + " WHERE userid = " + id + ";";
     }
 
+    public String buildGetUserByUsername(String username) {
+        final String tableName = getTableName(env);
+
+        return String.format("SELECT userid, username, email, sessionname, expdate"
+                + " FROM %s WHERE username LIKE '%s';", tableName, username);
+    }
+
     public String buildGetAllUsersQuery() {
         final String tableName = getTableName(env);
         return String.format("SELECT userid, username, email, password, sessionname, expdate" +
