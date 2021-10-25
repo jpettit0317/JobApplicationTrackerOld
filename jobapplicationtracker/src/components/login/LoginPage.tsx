@@ -7,6 +7,7 @@ import loginStyles from "../../styles/loginpagestyles";
 import LoginPageTestIds from "./LoginPageTestIds_enum";
 import LoginPageErrorPair from "../../models/LoginPageErrorPair";
 import Login from "../../models/Login";
+import loginUser from "../../functions/networkCalls/loginUser";
 
 const LoginPage: React.FC<LoginPageProps> = props => {
     const classes = loginStyles();
@@ -95,8 +96,12 @@ const LoginPage: React.FC<LoginPageProps> = props => {
         }
     }
 
-    const handleLogin = () => {
+    const handleLogin = async (login: Login) => {
         console.log(`Username: ${username}, Password: ${password}`);
+
+        const response = await loginUser(login);
+
+        console.log(`The result is ${JSON.stringify(response)}`);
     }
 
     const onSubmitButtonPressed = () => {
@@ -108,7 +113,7 @@ const LoginPage: React.FC<LoginPageProps> = props => {
         if (areThereErrors()) {
             return;
         }
-        handleLogin();
+        handleLogin(login);
     }
 
     return (
