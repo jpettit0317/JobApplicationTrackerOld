@@ -6,6 +6,7 @@ import com.jpettit.jobapplicationtrackerbackend.database.JobAppTrackerConnection
 import com.jpettit.jobapplicationtrackerbackend.helpers.ProjectEnvironment;
 import com.jpettit.jobapplicationtrackerbackend.helpers.UserControllerURL;
 import com.jpettit.jobapplicationtrackerbackend.models.HttpResponse;
+import com.jpettit.jobapplicationtrackerbackend.models.Login;
 import com.jpettit.jobapplicationtrackerbackend.models.User;
 import com.jpettit.jobapplicationtrackerbackend.models.UserServiceIntPair;
 import com.jpettit.jobapplicationtrackerbackend.services.UserService;
@@ -50,6 +51,15 @@ public class UserController {
             final HttpResponse<String> response = new HttpResponse<>("", "");
             return new ResponseEntity<>(response.getErrorMessage(), HttpStatus.CREATED);
         }
+    }
+
+    @PostMapping(UserControllerURL.loginUser)
+    public ResponseEntity<String> loginUser(@RequestBody Login login) {
+        System.out.println("In addUser");
+
+        System.out.println("Logging in user " + login.toString());
+
+        return new ResponseEntity<>("Success", HttpStatus.OK);
     }
 
     private UserService createUserService() {
