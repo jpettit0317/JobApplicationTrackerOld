@@ -3,8 +3,10 @@ package com.jpettit.jobapplicationtrackerbackend.daos;
 import com.jpettit.jobapplicationtrackerbackend.enums.UserFields;
 import com.jpettit.jobapplicationtrackerbackend.helpers.ProjectEnvironment;
 import com.jpettit.jobapplicationtrackerbackend.helpers.UserQuerier;
+import com.jpettit.jobapplicationtrackerbackend.models.Login;
 import com.jpettit.jobapplicationtrackerbackend.models.Session;
 import com.jpettit.jobapplicationtrackerbackend.models.User;
+import com.jpettit.jobapplicationtrackerbackend.models.UserServiceResultPair;
 
 import java.sql.*;
 import java.time.LocalDate;
@@ -50,6 +52,36 @@ public class UserDAO implements DAO<User> {
         } catch(SQLException execption) {
             System.out.println("Error: " + execption.getMessage());
             return Optional.empty();
+        }
+    }
+
+    public UserServiceResultPair<String> getPasswordForUser(Login login) {
+        try {
+            final UserQuerier QUERIER = new UserQuerier(environment);
+            final String QUERY = QUERIER.buildGetPasswordForUserQuery(login.getUsername());
+            Statement statement = jobAppConnection.createStatement();
+            ResultSet set = statement.executeQuery(QUERY);
+
+            return new UserServiceResultPair<>(buildPassword(set), "");
+        } catch(SQLException exception) {
+            System.out.println(String.format("Error: %s", exception.getMessage()));
+            exception.printStackTrace();
+            return new UserServiceResultPair<>("", exception.getMessage());
+        }
+    }
+
+    private String buildPassword(ResultSet set) {
+        try {
+            if (!set.next()) {
+                return "";
+            }
+
+            final String PASSWORD = set.getString(UserFields.password);
+            return PASSWORD;
+        } catch (SQLException sqlException) {
+            System.out.println("Error: " + sqlException.getMessage());
+            sqlException.printStackTrace();
+            return "";
         }
     }
 
@@ -154,6 +186,38 @@ public class UserDAO implements DAO<User> {
 
     public ArrayList<User> getAll() {
         return buildUsers();
+    }
+
+    public int updateSession(String username, Session newSession) {
+        final UserQuerier QUERIER = new UserQuerier(environment);
+        final String QUERY = QUERIER.buildUpdateSession();
+
+        try {
+           PreparedStatement statement = jobAppConnection.prepareStatement(QUERY);
+           return updateSession(statement, username, newSession);
+        } catch (SQLException e) {
+            System.out.println(String.format("Error: %s", e.getMessage()));
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
+    public int updateSession(PreparedStatement statement, String username, Session newSession) {
+        final Date sessionExpDate = convertLocalDateToDate(newSession.getExpirationDate());
+
+        try {
+            statement.setString(1, newSession.getSessionName());
+            statement.setDate(2, sessionExpDate);
+            statement.setString(3, username);
+
+            statement.addBatch();
+
+            return statement.executeUpdate();
+        } catch (SQLException sqlEx) {
+            System.out.println(String.format("Error: %s", sqlEx.getMessage()));
+            sqlEx.printStackTrace();
+            return 0;
+        }
     }
 
     public int insertOne(User t) {

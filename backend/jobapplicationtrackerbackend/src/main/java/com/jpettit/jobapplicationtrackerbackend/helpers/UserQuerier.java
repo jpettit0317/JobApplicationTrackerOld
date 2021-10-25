@@ -1,5 +1,7 @@
 package com.jpettit.jobapplicationtrackerbackend.helpers;
 
+import com.jpettit.jobapplicationtrackerbackend.models.Session;
+
 public class UserQuerier extends Querier {
     private ProjectEnvironment env;
 
@@ -42,10 +44,22 @@ public class UserQuerier extends Querier {
                 " FROM %s ORDER BY userid ASC;", tableName);
     }
 
+    public String buildGetPasswordForUserQuery(String username) {
+        final String TABLE_NAME = getTableName(env);
+
+        return String.format("SELECT password FROM %s WHERE username LIKE '%s';", TABLE_NAME, username);
+    }
+
     public String buildInsertOneUserQuery() {
         final String tableName = getTableName(env);
 
         return "INSERT INTO " + tableName + " (username, email, password, sessionname, expdate)" +
                 "VALUES (?, ?, ?, ?, ?)";
+    }
+
+    public String buildUpdateSession() {
+        final String TABLE_NAME = getTableName(env);
+
+        return String.format("UPDATE %s SET sessionname = ?, expdate = ? WHERE username = ?;", TABLE_NAME);
     }
 }

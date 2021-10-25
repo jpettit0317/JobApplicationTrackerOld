@@ -8,6 +8,7 @@ import LoginPageTestIds from "./LoginPageTestIds_enum";
 import LoginPageErrorPair from "../../models/LoginPageErrorPair";
 import Login from "../../models/Login";
 import loginUser from "../../functions/networkCalls/loginUser";
+import RoutePath from "../../enums/RoutePath_enum";
 
 const LoginPage: React.FC<LoginPageProps> = props => {
     const classes = loginStyles();
@@ -149,7 +150,7 @@ const LoginPage: React.FC<LoginPageProps> = props => {
                             </Grid>
                             <Grid container justifyContent="flex-end">
                                 <Grid item>
-                                    <Link href="#" variant="body2">
+                                    <Link href={RoutePath.signup} variant="body2">
                                         {signUpLink}
                                     </Link>
                                 </Grid>

@@ -1,10 +1,7 @@
 package com.jpettit.jobapplicationtrackerbackend.services;
 
 import com.jpettit.jobapplicationtrackerbackend.daos.UserDAO;
-import com.jpettit.jobapplicationtrackerbackend.models.Session;
-import com.jpettit.jobapplicationtrackerbackend.models.User;
-import com.jpettit.jobapplicationtrackerbackend.models.UserServiceIntPair;
-import com.jpettit.jobapplicationtrackerbackend.models.UserServiceUserPair;
+import com.jpettit.jobapplicationtrackerbackend.models.*;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -50,9 +47,36 @@ public class UserService {
         return UserServiceIntPair.createPair(recordsInserted, "");
     }
 
+    public UserServiceResultPair<String> validateUserLogin(Login login) {
+        final UserServiceResultPair<String> PASSWORD = userDAO.getPasswordForUser(login);
+
+        if (!PASSWORD.getMessage().equals("")) {
+            return new UserServiceResultPair<>("", PASSWORD.getMessage());
+        }
+
+        if (!comparePassword(login.getPassword(), PASSWORD.getValue())) {
+            return new UserServiceResultPair<>("", "Username or password doesn't match");
+        }
+        final Session NEW_SESSION = Session.createSessionWithExpDateTomorrow(UUID.randomUUID().toString());
+
+        final Integer RESULT = userDAO.updateSession(login.getUsername(), NEW_SESSION);
+
+        if (RESULT == 1) {
+            return new UserServiceResultPair<>(NEW_SESSION.getSessionName(), "");
+        } else {
+            return new UserServiceResultPair<>("", "Couldn't update session");
+        }
+    }
+
     private String hashPassword(String password) {
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder(this.strength);
 
         return passwordEncoder.encode(password);
+    }
+
+    private boolean comparePassword(String rawPassword, String hashedPassword) {
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder(this.strength);
+
+        return passwordEncoder.matches(rawPassword, hashedPassword);
     }
 }

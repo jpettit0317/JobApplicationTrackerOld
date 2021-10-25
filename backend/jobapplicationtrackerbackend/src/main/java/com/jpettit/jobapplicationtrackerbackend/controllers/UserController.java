@@ -5,10 +5,7 @@ import com.jpettit.jobapplicationtrackerbackend.daos.UserDAO;
 import com.jpettit.jobapplicationtrackerbackend.database.JobAppTrackerConnection;
 import com.jpettit.jobapplicationtrackerbackend.helpers.ProjectEnvironment;
 import com.jpettit.jobapplicationtrackerbackend.helpers.UserControllerURL;
-import com.jpettit.jobapplicationtrackerbackend.models.HttpResponse;
-import com.jpettit.jobapplicationtrackerbackend.models.Login;
-import com.jpettit.jobapplicationtrackerbackend.models.User;
-import com.jpettit.jobapplicationtrackerbackend.models.UserServiceIntPair;
+import com.jpettit.jobapplicationtrackerbackend.models.*;
 import com.jpettit.jobapplicationtrackerbackend.services.UserService;
 import javafx.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,11 +52,14 @@ public class UserController {
 
     @PostMapping(UserControllerURL.loginUser)
     public ResponseEntity<String> loginUser(@RequestBody Login login) {
-        System.out.println("In addUser");
+        final UserService service = createUserService();
+        final UserServiceResultPair<String> result = service.validateUserLogin(login);
 
-        System.out.println("Logging in user " + login.toString());
-
-        return new ResponseEntity<>("Success", HttpStatus.OK);
+        if (result.getMessage().equals("")) {
+            return new ResponseEntity<>(result.getValue(), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(result.getMessage(), HttpStatus.NOT_FOUND);
+        }
     }
 
     private UserService createUserService() {
