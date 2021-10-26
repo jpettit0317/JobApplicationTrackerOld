@@ -65,11 +65,12 @@ public class UserController {
     private UserService createUserService() {
         final Optional<Connection> connection = JobAppTrackerConnection.createConnection();
         final ProjectEnvironment appEnvironment = JobapplicationtrackerbackendApplication.environment;
+        final PasswordEncoder encoder = PasswordEncoder.createPasswordEncoder(12);
 
         System.out.println(connection.get().toString());
         System.out.println("The app environment is " + appEnvironment);
         UserDAO dao = new UserDAO(connection.get(), appEnvironment);
 
-        return new UserService(dao, 12);
+        return new UserService(dao, 12, encoder, new SessionManager());
     }
 }

@@ -1,9 +1,7 @@
 package com.jpettit.jobapplicationtrackerbackend.services;
 
 import com.jpettit.jobapplicationtrackerbackend.daos.UserDAO;
-import com.jpettit.jobapplicationtrackerbackend.models.User;
-import com.jpettit.jobapplicationtrackerbackend.models.UserServiceIntPair;
-import com.jpettit.jobapplicationtrackerbackend.models.UserServiceUserPair;
+import com.jpettit.jobapplicationtrackerbackend.models.*;
 import helpers.UserServiceHelper;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
@@ -14,16 +12,26 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import helpers.UserServiceUserPairHelper;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class UserServiceTest {
     @InjectMocks
     private static UserService sut;
 
     @Mock
     private UserDAO userDAO;
+
+    @Mock
+    private PasswordEncoder encoder;
+
+    @Mock
+    private SessionManager sessionManager;
 
 //    @BeforeEach
 //    void setUp() {
@@ -63,10 +71,12 @@ class UserServiceTest {
     @Test
     public void testCreateUser_whenPassedInNonExistingUser_shouldReturnOneAndNoErrorMessage() {
         final Optional<User> user = Optional.of(UserServiceHelper.user);
+        final Session session = user.get().getSession();
+        final String USER_PASSWORD = user.get().getPassword();
         final UserServiceIntPair expectedPair = UserServiceIntPair.createPair(1, "");
 
         Mockito.when(userDAO.getByUsername(user.get().getUsername())).thenReturn(Optional.empty());
-        Mockito.when(userDAO.insertOne(user.get())).thenReturn(1);
+        Mockito.when(userDAO.insertOne(null)).thenReturn(1);
 
         final UserServiceIntPair pair = sut.createUser(user.get());
 

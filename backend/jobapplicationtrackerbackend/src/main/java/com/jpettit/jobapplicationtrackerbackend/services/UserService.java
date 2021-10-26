@@ -3,6 +3,7 @@ package com.jpettit.jobapplicationtrackerbackend.services;
 import com.jpettit.jobapplicationtrackerbackend.daos.UserDAO;
 import com.jpettit.jobapplicationtrackerbackend.models.*;
 
+import java.time.LocalDate;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -11,10 +12,15 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 public class UserService {
     private UserDAO userDAO;
     private final Integer strength;
+    private PasswordEncoder encoder;
+    private SessionManager sessionManager;
 
-    public UserService(UserDAO newUserDAO, Integer strength) {
+    public UserService(UserDAO newUserDAO, Integer strength,
+                       PasswordEncoder encoder, SessionManager sessionManager) {
         this.userDAO = newUserDAO;
         this.strength = strength;
+        this.encoder = encoder;
+        this.sessionManager = sessionManager;
     }
 
     private String printUserDAO(UserDAO dao) {
@@ -39,8 +45,10 @@ public class UserService {
             return UserServiceIntPair.createPair(0, "User exists");
         }
         final String hashedPassword = hashPassword(user.getPassword());
-        final Session session = Session.createSessionWithExpDateTomorrow(UUID.randomUUID().toString());
-        final User newUser = User.createUserFromUserPasswordSession(user, hashedPassword, session);
+        final String sessionName = UUID.randomUUID().toString();
+        final LocalDate nextDay = LocalDate.now().plusDays(1);
+
+        final User newUser = sessionManager.createNewUser(user, hashedPassword, sessionName, nextDay);
 
         final int recordsInserted = userDAO.insertOne(newUser);
 
@@ -69,14 +77,10 @@ public class UserService {
     }
 
     private String hashPassword(String password) {
-        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder(this.strength);
-
-        return passwordEncoder.encode(password);
+        return encoder.hashPassword(password);
     }
 
     private boolean comparePassword(String rawPassword, String hashedPassword) {
-        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder(this.strength);
-
-        return passwordEncoder.matches(rawPassword, hashedPassword);
+       return encoder.comparePassword(rawPassword, hashedPassword);
     }
 }

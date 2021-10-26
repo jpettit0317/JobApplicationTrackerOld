@@ -13,6 +13,8 @@ public class UserServiceHelper {
             "p1",
             Session.createSession("invalidSession", LocalDate.of(2000, 1, 1)),
             0L);
+    public static final User user2 = User.createUser("u2", "e2", "p2",
+            Session.createSession("goodSession", LocalDate.of(2000, 1, 1)), 1L);
     public static final Optional<User> nullUser = Optional.empty();
 
     public static void verifyUserServiceUserPair(UserServiceIntPair actual, UserServiceIntPair expected) {
