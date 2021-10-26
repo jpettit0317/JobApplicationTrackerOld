@@ -14,6 +14,7 @@ import createUser from "../../functions/networkCalls/createUser";
 import { Alert } from "@material-ui/lab";
 import HttpResponse from "../../models/HttpResponse";
 import RoutePath from "../../enums/RoutePath_enum";
+import { getCookie, deleteCookie, setCookie } from "../../functions/utils/cookieUtil";
 
 const SignUpPage: React.FC<SignUpProps> = props => {
     const classes = signUpStyles();
@@ -189,7 +190,14 @@ const SignUpPage: React.FC<SignUpProps> = props => {
                 console.log("Creating alert");
                 alert(response.reasonForFailure);
             } else {
-                return;
+                const sessionId: string | undefined = response.data;
+
+                if (sessionId !== undefined && sessionId !== "") {
+                    console.log(`The sessionId is ${sessionId}`);
+                    setCookie(sessionId);
+                } else {
+                    return;
+                }
             }
         } catch (error: any) {
             console.log("Error in creating httpresponse " + JSON.stringify(error));

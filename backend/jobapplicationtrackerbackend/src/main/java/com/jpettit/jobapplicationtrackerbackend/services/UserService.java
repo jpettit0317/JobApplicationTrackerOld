@@ -38,12 +38,13 @@ public class UserService {
         return UserServiceUserPair.createPair(user, "");
     }
 
-    public UserServiceIntPair createUser(User user) {
+    public UserServiceResultPair<String> createUser(User user) {
         final Optional<User> duplicateUser = userDAO.getByUsername(user.getUsername());
 
         if (duplicateUser.isPresent()) {
-            return UserServiceIntPair.createPair(0, "User exists");
+            return new UserServiceResultPair<>("", "User exists");
         }
+
         final String hashedPassword = hashPassword(user.getPassword());
         final String sessionName = UUID.randomUUID().toString();
         final LocalDate nextDay = LocalDate.now().plusDays(1);
@@ -52,7 +53,11 @@ public class UserService {
 
         final int recordsInserted = userDAO.insertOne(newUser);
 
-        return UserServiceIntPair.createPair(recordsInserted, "");
+        if (recordsInserted == 1) {
+            return new UserServiceResultPair<>(sessionName, "");
+        } else {
+            return new UserServiceResultPair<>("", "Couldn't create user");
+        }
     }
 
     public UserServiceResultPair<String> validateUserLogin(Login login) {

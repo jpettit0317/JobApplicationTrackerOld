@@ -70,30 +70,31 @@ class UserServiceTest {
     }
 
     @Test
-    public void testCreateUser_whenPassedInNonExistingUser_shouldReturnOneAndNoErrorMessage() {
+    public void testCreateUser_whenPassedInNonExistingUser_shouldReturnSessionIdAndNoErrorMessage() {
         final Optional<User> user = Optional.of(UserServiceHelper.user);
         final Session session = user.get().getSession();
         final String USER_PASSWORD = user.get().getPassword();
-        final UserServiceIntPair expectedPair = UserServiceIntPair.createPair(1, "");
 
         Mockito.when(userDAO.getByUsername(user.get().getUsername())).thenReturn(Optional.empty());
         Mockito.when(userDAO.insertOne(null)).thenReturn(1);
 
-        final UserServiceIntPair pair = sut.createUser(user.get());
+        final UserServiceResultPair<String> ACTUAL = sut.createUser(user.get());
 
-        UserServiceHelper.verifyUserServiceUserPair(pair, expectedPair);
+        Assertions.assertEquals("", ACTUAL.getMessage());
+        Assertions.assertNotEquals("", ACTUAL.getValue());
     }
 
     @Test
-    public void testCreateUser_whenPassedInExistingUser_shouldReturnZeroAndUserExists() {
+    public void testCreateUser_whenPassedInExistingUser_shouldReturnEmptyValueAndUserExists() {
         final Optional<User> user = Optional.of(UserServiceHelper.user);
-        final UserServiceIntPair expectedPair = UserServiceIntPair.createPair(0, "User exists");
+        final String EXPECTED_ERROR_MSG = "User exists";
 
         Mockito.when(userDAO.getByUsername(user.get().getUsername())).thenReturn(user);
 
-        final UserServiceIntPair pair = sut.createUser(user.get());
+        final UserServiceResultPair<String> ACTUAL_PAIR = sut.createUser(user.get());
 
-        UserServiceHelper.verifyUserServiceUserPair(pair, expectedPair);
+        Assertions.assertEquals("", ACTUAL_PAIR.getValue());
+        Assertions.assertEquals(EXPECTED_ERROR_MSG, ACTUAL_PAIR.getMessage());
     }
 
     @Test

@@ -37,16 +37,14 @@ public class UserController {
     public ResponseEntity<String> addUser(@RequestBody User newUser) {
         System.out.println("In addUser");
         final UserService service = createUserService();
-        final UserServiceIntPair result = service.createUser(newUser);
+        final UserServiceResultPair<String> PAIR = service.createUser(newUser);
 
-        System.out.println(result.toString());
-        if(!result.getMessage().equals("")) {
-            final HttpResponse<String> response = new HttpResponse<>("", result.getMessage());
-            System.out.println(String.format("The response is %s", response.toString()));
-            return new ResponseEntity<>(response.getErrorMessage(), HttpStatus.NOT_FOUND);
+        System.out.println(PAIR.toString());
+        if(!PAIR.getMessage().equals("")) {
+            System.out.println(String.format("The response is %s", PAIR.getMessage()));
+            return new ResponseEntity<>(PAIR.getMessage(), HttpStatus.NOT_FOUND);
         } else {
-            final HttpResponse<String> response = new HttpResponse<>("", "");
-            return new ResponseEntity<>(response.getErrorMessage(), HttpStatus.CREATED);
+            return new ResponseEntity<>(PAIR.getValue(), HttpStatus.CREATED);
         }
     }
 
