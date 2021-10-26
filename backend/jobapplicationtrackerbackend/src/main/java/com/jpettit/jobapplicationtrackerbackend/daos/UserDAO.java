@@ -62,7 +62,13 @@ public class UserDAO implements DAO<User> {
             Statement statement = jobAppConnection.createStatement();
             ResultSet set = statement.executeQuery(QUERY);
 
-            return new UserServiceResultPair<>(buildPassword(set), "");
+            final String PASSWORD = buildPassword(set);
+
+            if (PASSWORD.equals("")) {
+                return new UserServiceResultPair<>("", "Password doesn't exist");
+            } else {
+                return new UserServiceResultPair<>(PASSWORD, "");
+            }
         } catch(SQLException exception) {
             System.out.println(String.format("Error: %s", exception.getMessage()));
             exception.printStackTrace();
