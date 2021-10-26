@@ -2,9 +2,11 @@ package com.jpettit.jobapplicationtrackerbackend.daos;
 
 import com.jpettit.jobapplicationtrackerbackend.database.JobAppTrackerConnection;
 import com.jpettit.jobapplicationtrackerbackend.helpers.ProjectEnvironment;
+import com.jpettit.jobapplicationtrackerbackend.models.Login;
 import com.jpettit.jobapplicationtrackerbackend.models.Session;
 import com.jpettit.jobapplicationtrackerbackend.models.User;
 
+import com.jpettit.jobapplicationtrackerbackend.models.UserServiceResultPair;
 import helpers.TestPair;
 import helpers.UserDAOTestHelpers;
 import org.junit.jupiter.api.*;
@@ -177,5 +179,33 @@ class UserDAOTest {
         final TestPair<Integer> countPair = new TestPair<>(actualCount, expectedCount);
 
         UserDAOTestHelpers.assertUserCountIsEqual(countPair);
+    }
+
+    @Test
+    public void testGetPasswordForUser_WithValidLogin_ShouldReturnPasswordAndNoErrorMessage() {
+        users = UserDAOTestHelpers.createDefaultTestUsers();
+        UserDAOTestHelpers.insertManyUsers(testConnection.get(), users);
+
+        final User USER = users.get(0);
+        final Login LOGIN = Login.createLogin(USER.getUsername(), USER.getPassword());
+        final UserServiceResultPair<String> PAIR = new UserServiceResultPair<>(USER.getPassword(), "");
+
+        final UserServiceResultPair<String> ACTUAL_PAIR = sut.getPasswordForUser(LOGIN);
+
+        Assertions.assertEquals(PAIR.getValue(), ACTUAL_PAIR.getValue());
+        Assertions.assertEquals(PAIR.getMessage(), ACTUAL_PAIR.getMessage());
+    }
+
+    @Test
+    public void testGetPasswordForUser_WithNonExistantUser_ShouldReturnNoPasswordAndErrorMessage() {
+        users = UserDAOTestHelpers.createDefaultTestUsers();
+        UserDAOTestHelpers.insertManyUsers(testConnection.get(), users);
+        final User USER = UserDAOTestHelpers.nonExistantUser2;
+        final Login LOGIN = Login.createLogin(USER.getUsername(), USER.getPassword());
+
+        final UserServiceResultPair<String> ACTUAL_PAIR = sut.getPasswordForUser(LOGIN);
+
+        Assertions.assertEquals("", ACTUAL_PAIR.getValue());
+        Assertions.assertNotEquals("", ACTUAL_PAIR.getMessage());
     }
 }

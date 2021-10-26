@@ -5,9 +5,11 @@ import com.jpettit.jobapplicationtrackerbackend.database.JobAppTrackerConnection
 import com.jpettit.jobapplicationtrackerbackend.enums.UserFields;
 import com.jpettit.jobapplicationtrackerbackend.helpers.ProjectEnvironment;
 import com.jpettit.jobapplicationtrackerbackend.helpers.UserQuerier;
+import com.jpettit.jobapplicationtrackerbackend.models.Login;
 import com.jpettit.jobapplicationtrackerbackend.models.Session;
 import com.jpettit.jobapplicationtrackerbackend.models.User;
 import org.checkerframework.checker.units.qual.A;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.sql.*;
 import java.time.LocalDate;
@@ -24,8 +26,18 @@ public class UserDAOTestHelpers {
            "p1",
            Session.createSession("invalidSession", LocalDate.of(2000, 1, 1)),
            3L);
+   public static final User nonExistantUser2 = User.createUser("u3", "e3", "p3",
+           Session.createSession("invalidSession", LocalDate.of(2000, 1, 1)), 4L);
    public static final User newUser = User.createUser("u3", "e3", "p1",
            Session.createSession("s1", LocalDate.of(2000, 1, 1)), 4L);
+   public static final Login login = Login.createLogin("u1", "p1");
+
+   public static String hashPassword(final Integer NUM_OF_ROUNDS, final String RAW_PASSWORD) {
+      final BCryptPasswordEncoder ENCODER = new BCryptPasswordEncoder(NUM_OF_ROUNDS);
+
+      return ENCODER.encode(RAW_PASSWORD);
+   }
+
    public static void assertSavedUserIsCorrect(TestPair<Optional<User>> userPair, TestPair<Integer> countPair) {
       assertUserIsEqual(userPair);
       assertUserCountIsEqual(countPair);
