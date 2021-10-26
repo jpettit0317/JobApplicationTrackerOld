@@ -13,6 +13,7 @@ import { ErrorSharp, RestoreOutlined } from "@material-ui/icons";
 import createUser from "../../functions/networkCalls/createUser";
 import { Alert } from "@material-ui/lab";
 import HttpResponse from "../../models/HttpResponse";
+import RoutePath from "../../enums/RoutePath_enum";
 
 const SignUpPage: React.FC<SignUpProps> = props => {
     const classes = signUpStyles();
@@ -251,7 +252,7 @@ const SignUpPage: React.FC<SignUpProps> = props => {
                         </Grid>
                         <Grid container justifyContent="flex-end">
                             <Grid item>
-                                <Link href="#" variant="body2">
+                                <Link href={RoutePath.login} variant="body2">
                                     Already have an account? Sign in
                                 </Link>
                             </Grid>
