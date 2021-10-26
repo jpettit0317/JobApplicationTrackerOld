@@ -4,6 +4,7 @@ import com.jpettit.jobapplicationtrackerbackend.daos.UserDAO;
 import com.jpettit.jobapplicationtrackerbackend.models.*;
 import helpers.UserServiceHelper;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -93,5 +94,65 @@ class UserServiceTest {
         final UserServiceIntPair pair = sut.createUser(user.get());
 
         UserServiceHelper.verifyUserServiceUserPair(pair, expectedPair);
+    }
+
+    @Test
+    public void testValidateUserLogin_whenPassedInNonExistingUser_shouldReturnEmptyValueAndErrorMessage() {
+        final Login LOGIN = UserServiceHelper.nonExistantLogin;
+        final UserServiceResultPair<String> pair = new UserServiceResultPair<>("", "Username or password doesn't exist");
+        Mockito.when(userDAO.getPasswordForUser(LOGIN)).thenReturn(pair);
+
+        final UserServiceResultPair<String> actualPair = sut.validateUserLogin(LOGIN);
+
+        Assertions.assertEquals(actualPair.getMessage(), pair.getMessage());
+        Assertions.assertEquals(actualPair.getValue(), pair.getValue());
+    }
+
+    @Test
+    public void testValidateUserLogin_whenPassedInDifferentPasswordForUser_shouldReturnEmptyValueAndErrorMessage() {
+       final Login LOGIN = UserServiceHelper.login;
+
+       Mockito.when(userDAO.getPasswordForUser(LOGIN)).thenReturn(new UserServiceResultPair<>("manWord", ""));
+       Mockito.when(encoder.comparePassword("manWord", LOGIN.getPassword())).thenReturn(false);
+
+       final UserServiceResultPair<String> actualPair = sut.validateUserLogin(LOGIN);
+       final UserServiceResultPair<String> expectedPair = new UserServiceResultPair<>("", "Username or password doesn't match");
+
+        Assertions.assertEquals(actualPair.getMessage(), expectedPair.getMessage());
+        Assertions.assertEquals(actualPair.getValue(), expectedPair.getValue());
+    }
+
+    @Test
+    public void testValidateUserLogin_whenPassedInExistingLogin_shouldReturnSessionNameAndNoErrorMessage() {
+        final Login LOGIN = UserServiceHelper.login;
+
+        Mockito.when(userDAO.getPasswordForUser(LOGIN))
+                .thenReturn(new UserServiceResultPair<>(LOGIN.getPassword(), ""));
+        Mockito.when(encoder.comparePassword(Mockito.eq(LOGIN.getPassword()),
+                Mockito.anyString())).thenReturn(true);
+        Mockito.when(userDAO.updateSession(Mockito.eq(LOGIN.getUsername()), Mockito.any(Session.class))).thenReturn(1);
+
+        final UserServiceResultPair<String> ACTUAL_PAIR = sut.validateUserLogin(LOGIN);
+
+        Assertions.assertEquals("", ACTUAL_PAIR.getMessage());
+        Assertions.assertNotEquals("", ACTUAL_PAIR.getValue());
+    }
+
+    @Test
+    public void testValidateUserLogin_whenPassedInLoginAndCantUpdateSession_shouldReturnNoValueAndCouldNotUpdateSession() {
+        final Login LOGIN = UserServiceHelper.login;
+
+        Mockito.when(userDAO.getPasswordForUser(LOGIN))
+                .thenReturn(new UserServiceResultPair<>(LOGIN.getPassword(), ""));
+        Mockito.when(encoder.comparePassword(Mockito.eq(LOGIN.getPassword()),
+                Mockito.anyString())).thenReturn(true);
+        Mockito.when(userDAO.updateSession(Mockito.eq(LOGIN.getUsername()), Mockito.any(Session.class)))
+                .thenReturn(0);
+
+        final UserServiceResultPair<String> ACTUAL_PAIR = sut.validateUserLogin(LOGIN);
+        final String ERROR_MESSAGE = "Couldn't update session";
+
+        Assertions.assertEquals(ERROR_MESSAGE, ACTUAL_PAIR.getMessage());
+        Assertions.assertEquals("", ACTUAL_PAIR.getValue());
     }
 }
