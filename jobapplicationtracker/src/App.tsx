@@ -7,6 +7,7 @@ import RoutePath from './enums/RoutePath_enum';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import createSignUpPage from './components/signup/createSignUpPage';
 import createLoginPage from './components/login/createLoginPage';
+import createJobAppList from './components/jobapplist/createJobAppList';
 
 function App() {
 
@@ -14,9 +15,10 @@ function App() {
     <div>
         <BrowserRouter>
            <Switch>
-             <Route path={RoutePath.signup} component={ () => createSignUpPage() } />
-             <Route path={RoutePath.home} component={ () => createLoginPage() } />
-             <Route path={RoutePath.login} component={ () => createLoginPage() } />
+             <Route exact path={RoutePath.home} component={() => createLoginPage()} />
+             <Route exact path={RoutePath.jobapplist} component={() => createJobAppList()} />
+             <Route exact path={RoutePath.signup} component={ () => createSignUpPage() } />
+             <Route exact path={RoutePath.login} component={ () => createLoginPage() } />
            </Switch>
         </BrowserRouter>
     </div>

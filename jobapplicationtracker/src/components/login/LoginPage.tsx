@@ -1,6 +1,6 @@
 import LoginPageProps from "./LoginPageProps";
 import React, { useState } from "react";
-import { withRouter } from "react-router";
+import { withRouter, Redirect } from "react-router-dom";
 import NavBar from "../navbar/NavBar";
 import { Button, Container, CssBaseline, Grid, Link, TextField, Typography } from "@material-ui/core";
 import loginStyles from "../../styles/loginpagestyles";
@@ -9,6 +9,7 @@ import LoginPageErrorPair from "../../models/LoginPageErrorPair";
 import Login from "../../models/Login";
 import loginUser from "../../functions/networkCalls/loginUser";
 import RoutePath from "../../enums/RoutePath_enum";
+import { deleteCookie, getCookie, setCookie } from "../../functions/utils/cookieUtil";
 
 const LoginPage: React.FC<LoginPageProps> = props => {
     const classes = loginStyles();
@@ -22,13 +23,33 @@ const LoginPage: React.FC<LoginPageProps> = props => {
     const [userNameError, setUserNameError] = useState("");
     const [passwordError, setPasswordError] = useState("");
 
-    const areThereErrors = (): boolean => {
-        return userNameError !== "" || passwordError !== "";
+    const [shouldRedirect, setShouldRedirect] = useState(false);
+    const [redirectDestination, setRedirectDestination] = useState("");
+
+    const areThereErrors = (errors: LoginPageErrorPair): boolean => {
+        return errors.usernameError !== "" || 
+           errors.passwordError !== "";
     }
 
     const setErrors = (errors: LoginPageErrorPair) => {
         setUserNameError(errors.usernameError);
         setPasswordError(errors.passwordError);
+        console.log(`Username error: ${userNameError}`);
+        console.log(`Password error: ${passwordError}`);
+    }
+
+    const setRedirect = (redirect: {destination: string, shouldRedirect: boolean}) => {
+        console.log(`ShouldRedirect = ${redirect.shouldRedirect} Destination = ${redirect.destination}`);
+        setShouldRedirect(redirect.shouldRedirect);
+        setRedirectDestination(redirect.destination);
+    }
+
+    const redirect = (): JSX.Element | null => {
+        if (shouldRedirect && redirectDestination !== "") {
+            return <Redirect to={redirectDestination} />
+        } else {
+            return null;
+        }
     }
 
     const renderUsernameField = (): JSX.Element => {
@@ -101,8 +122,19 @@ const LoginPage: React.FC<LoginPageProps> = props => {
         console.log(`Username: ${username}, Password: ${password}`);
 
         const response = await loginUser(login);
-
         console.log(`The result is ${JSON.stringify(response)}`);
+
+        if (response.status >= 300) {
+            alert(response.reasonForFailure);
+        } else {
+            const sessionId = response.data;
+
+            if (sessionId !== undefined && sessionId !== "") {
+                const destination = String(RoutePath.jobapplist);
+                setCookie(sessionId);
+                setRedirect({destination: destination, shouldRedirect: true});
+            }
+        }
     }
 
     const onSubmitButtonPressed = () => {
@@ -111,9 +143,10 @@ const LoginPage: React.FC<LoginPageProps> = props => {
         const errors = login.validateLogin();
         setErrors(errors);
 
-        if (areThereErrors()) {
+        if (areThereErrors(errors)) {
             return;
         }
+        
         handleLogin(login);
     }
 
@@ -121,6 +154,7 @@ const LoginPage: React.FC<LoginPageProps> = props => {
         <div>
             <div>
                 <NavBar navBarTitle="JobApplicationTracker" />
+                {shouldRedirect && redirect()}
                 <Container component="main" maxWidth="xs">
                     <CssBaseline />
                     <div className={classes.paper}>
