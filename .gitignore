@@ -22,6 +22,7 @@ jobapplicationtracker/build
 jobapplicationtracker/npm-debug.log*
 jobapplicationtracker/yarn-debug.log*
 jobapplicationtracker/yarn-error.log*
+jobapplicationtracker/src/components/jobapplist/fakejobapps.ts
 
 #Backend ignores
 HELP.md

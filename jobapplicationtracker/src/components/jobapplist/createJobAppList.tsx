@@ -1,8 +1,10 @@
+import IJobApp from "../../models/IJobApp";
 import JobAppList from "./JobAppList";
+import fakeIJobApps from "./fakejobapps";
 
-const createJobAppList = (title: string = ""): JSX.Element => {
+const createJobAppList = (jobApps: IJobApp[] = fakeIJobApps): JSX.Element => {
     return (
-        <JobAppList title={title} />
+        <JobAppList jobApps={jobApps} />
     );
 };
 

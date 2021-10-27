@@ -1,7 +1,7 @@
 import { RouteComponentProps } from 'react-router-dom';
-
+import IJobApp from "../../models/IJobApp";
 interface JobAppListProps extends RouteComponentProps {
-    title: string;
+    jobApps: IJobApp[];
 };
 
 export default JobAppListProps;
