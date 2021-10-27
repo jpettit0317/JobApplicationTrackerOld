@@ -3,7 +3,7 @@ import SignUpPageTestIds from "./SignUpPageTestIds_enum";
 import signUpStyles from "../../styles/signuppagestyles";
 
 import React, { useState } from "react";
-import { withRouter } from "react-router";
+import { withRouter, Redirect } from "react-router-dom";
 
 import { Box, Grid, Container, TextField, makeStyles, Button, Typography, CssBaseline, Link} from "@material-ui/core"; 
 import NavBar from "../navbar/NavBar";
@@ -28,6 +28,22 @@ const SignUpPage: React.FC<SignUpProps> = props => {
     const [emailError, setEmailError] = useState("");
     const [passwordError, setPasswordError] = useState("");
     const [confirmPasswordError, setConfirmPasswordError] = useState("");
+
+    const [shouldRedirect, setShouldRedirect] = useState(false);
+    const [redirectDestination, setRedirectDestination] = useState("");
+
+    const setRedirect = (redirect: {shouldRedirect: boolean, destination: string}) => {
+        setShouldRedirect(redirect.shouldRedirect);
+        setRedirectDestination(redirect.destination);
+    }
+
+    const redirect = (): JSX.Element | null => {
+        if (shouldRedirect && redirectDestination !== "") {
+            return <Redirect to={redirectDestination}/>
+        } else {
+            return null;
+        }
+    }
 
     const renderUsernameField = (): JSX.Element => {
         if (userNameError === "") {
@@ -195,6 +211,7 @@ const SignUpPage: React.FC<SignUpProps> = props => {
                 if (sessionId !== undefined && sessionId !== "") {
                     console.log(`The sessionId is ${sessionId}`);
                     setCookie(sessionId);
+                    setRedirect({shouldRedirect: true, destination: RoutePath.jobapplist});
                 } else {
                     return;
                 }
@@ -225,6 +242,7 @@ const SignUpPage: React.FC<SignUpProps> = props => {
     return ( 
         <div>
             <NavBar navBarTitle="JobApplicationTracker" />
+            {shouldRedirect && redirect()}
             <Container component="main" maxWidth="xs">
                 <CssBaseline />
                 <div className={classes.paper}>
