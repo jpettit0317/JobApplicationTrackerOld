@@ -26,7 +26,7 @@ const JobAppList: React.FC<JobAppListProps> = props => {
                 setJobApps([]);
             }
         } catch (error: any) {
-            console.log(JSON.stringify(error));
+            console.log(`Error: ${JSON.stringify(error)}`);
             setJobApps([]);
         }
     }
