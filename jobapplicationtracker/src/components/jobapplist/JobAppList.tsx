@@ -2,15 +2,41 @@ import JobAppListProps from "./JobAppListProps";
 import { withRouter } from "react-router-dom";
 import { Button, Container, Grid } from "@material-ui/core";
 import IJobApp from "../../models/IJobApp";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { JobAppCard, displayJobAppCard } from "./JobAppCard";
 import NavBar from "../navbar/NavBar";
 import useJobAppListStyles from "./JobAppListStyles";
+import getJobAppCard from "../../functions/networkCalls/getJobAppCard";
+import URLPath from "../../enums/URLPath_enum";
+import { getCookie } from "../../functions/utils/cookieUtil";
 
 const JobAppList: React.FC<JobAppListProps> = props => {
     const classes = useJobAppListStyles();
 
     const [jobApps, setJobApps] = useState<IJobApp[]>(props.jobApps);
+    
+    const handleData = async () => {
+        const sessionId = getCookie("sessionId");
+
+        try {
+            if (sessionId !== null) {
+                const response = await getJobAppCard(URLPath.getJobAppCard, sessionId);
+                console.log(`JobApps: ${JSON.stringify(response.data)}`);
+            } else {
+                setJobApps([]);
+            }
+        } catch (error: any) {
+            console.log(JSON.stringify(error));
+            setJobApps([]);
+        }
+    }
+
+    useEffect( () => {
+        console.log("In use effect");
+
+        handleData();
+    }, []);
+    
     const onAddJobAppButtonPressed = () => {
 
     }
