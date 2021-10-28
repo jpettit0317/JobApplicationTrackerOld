@@ -7,8 +7,8 @@ const getJobAppCard = async (url: URLPath, sessionId: string): Promise<HttpRespo
 
     try {
         const response = await axios.get(newURL);
-
-        return new HttpResponse<string[]>(response.status, "", response.data);
+        const data: string[] = response.data.value;
+        return new HttpResponse<string[]>(response.status, "", data);
     } catch (error: any) {
         const statusCode = Number(error.response.status);
         const reasonForFailure = String(error.response.data);

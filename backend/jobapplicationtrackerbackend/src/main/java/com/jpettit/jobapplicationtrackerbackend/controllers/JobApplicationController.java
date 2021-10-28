@@ -1,6 +1,7 @@
 package com.jpettit.jobapplicationtrackerbackend.controllers;
 
 import com.jpettit.jobapplicationtrackerbackend.helpers.JobApplicationURLS;
+import com.jpettit.jobapplicationtrackerbackend.models.ResultPair;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,10 +12,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class JobApplicationController {
     @GetMapping(JobApplicationURLS.getJobAppCard)
-    public ResponseEntity<String[]> getJobAppCards(@PathVariable String sessionId) {
+    public ResponseEntity<ResultPair<String[]>> getJobAppCards(@PathVariable String sessionId) {
         System.out.println("The sessionId is " + sessionId);
         final String[] RESULT = {"Success"};
+        final ResultPair<String[]> PAIR = new ResultPair<>(RESULT, "");
 
-        return new ResponseEntity<>(RESULT, HttpStatus.OK);
+        return new ResponseEntity<>(PAIR, HttpStatus.OK);
     }
 }
