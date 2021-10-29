@@ -18,4 +18,12 @@ public class ResultPair<T> implements DaoPair<T> {
     public String getMessage() {
         return ERROR_MESSAGE;
     }
+
+    @Override
+    public String toString() {
+        return "ResultPair{" +
+                "VALUE=" + VALUE +
+                ", ERROR_MESSAGE='" + ERROR_MESSAGE + '\'' +
+                '}';
+    }
 }
