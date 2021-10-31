@@ -2,28 +2,52 @@ package com.jpettit.jobapplicationtrackerbackend.helpers;
 
 import helpers.UserQuerierTestHelpers;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.ArrayList;
+import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class UserQuerierTest {
-    UserQuerier sut;
+    private UserQuerier sut;
+    private ArrayList<ProjectEnvironment> environments;
+
+    @BeforeEach
+    void setUp() {
+        environments = getAllEnvironments();
+    }
 
     @AfterEach
     void tearDown() {
         sut = null;
+        destroyEnvironments();
     }
 
-    @Test
-    public void testBuildGetUsernameBySessionId_whenPassedInOneAndDevEnvironment_shouldReturnSessionIdOfOne() {
-        final String SESSION_ID = UserQuerierTestHelpers.user1Session.getSessionName();
+    private void destroyEnvironments() {
+        environments.clear();
+        environments = null;
+    }
+
+    private static ArrayList<ProjectEnvironment> getAllEnvironments() {
         final ProjectEnvironment[] ENVS = {
                 ProjectEnvironment.TEST,
                 ProjectEnvironment.DEV,
                 ProjectEnvironment.PROD
         };
+        ArrayList<ProjectEnvironment> environments = new ArrayList<>();
 
-        for (ProjectEnvironment env : ENVS) {
+        Collections.addAll(environments, ENVS);
+
+        return environments;
+    }
+
+    @Test
+    public void testBuildGetUsernameBySessionId_whenPassedInOneAndDevEnvironment_shouldReturnSessionIdOfOne() {
+        final String SESSION_ID = UserQuerierTestHelpers.user1Session.getSessionName();
+
+        for (ProjectEnvironment env : environments) {
             sut = new UserQuerier(env);
             final String EXPECTED_QUERY = UserQuerierTestHelpers
                     .getExpectedGetUsernameBySessionIdQuery(env, SESSION_ID);
@@ -37,13 +61,8 @@ class UserQuerierTest {
     @Test
     public void testBuildGetUsernameBySessionId_whenPassedInTwoAndEnvironments_shouldReturnSessionIdOfTwo() {
         final String SESSION_ID = "2";
-        final ProjectEnvironment[] ENVS = {
-                ProjectEnvironment.TEST,
-                ProjectEnvironment.DEV,
-                ProjectEnvironment.PROD
-        };
 
-        for (ProjectEnvironment env : ENVS) {
+        for (ProjectEnvironment env : environments) {
             sut = new UserQuerier(env);
             final String EXPECTED_QUERY = UserQuerierTestHelpers
                     .getExpectedGetUsernameBySessionIdQuery(env, SESSION_ID);
@@ -53,4 +72,5 @@ class UserQuerierTest {
             UserQuerierTestHelpers.assertQueriesAreEqual(ACTUAL_QUERY, EXPECTED_QUERY);
         }
     }
+
 }
