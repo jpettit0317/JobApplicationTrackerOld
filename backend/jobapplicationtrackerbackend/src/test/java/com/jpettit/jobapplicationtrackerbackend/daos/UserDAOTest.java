@@ -217,4 +217,30 @@ class UserDAOTest {
 
         UserDAOTestHelpers.assertResultPairAreEqual(ACTUAL_PAIR, EXPECTED_PAIR);
     }
+
+    @Test
+    public void testGetUsernameBySessionId_whenPassingInFirstId_shouldReturnResultPairWithU1AndNoErrorMessage() {
+        users = UserDAOTestHelpers.createDefaultTestUsers();
+        UserDAOTestHelpers.insertManyUsers(testConnection.get(), users);
+        final User USER = users.get(0);
+
+        final String SESSION_ID = USER.getSession().getSessionName();
+        ResultPair<String> EXPECTED_PAIR = new ResultPair<>(USER.getUsername(), "");
+        ResultPair<String> ACTUAL_PAIR = sut.getUsernameBySessionId(SESSION_ID);
+
+        UserDAOTestHelpers.assertResultPairAreEqual(ACTUAL_PAIR, EXPECTED_PAIR);
+    }
+
+    @Test
+    public void testGetUsernameBySessionId_whenPassingInThirdId_shouldReturnResultPairWithNoUsernameAndErrorMessageAsSessionIdDoesntExist() {
+        users = UserDAOTestHelpers.createDefaultTestUsers();
+        UserDAOTestHelpers.insertManyUsers(testConnection.get(), users);
+
+
+        final String SESSION_ID = "third";
+        ResultPair<String> EXPECTED_PAIR = new ResultPair<>("", sut.NONEXISTANT_SESSIONID);
+        ResultPair<String> ACTUAL_PAIR = sut.getUsernameBySessionId(SESSION_ID);
+
+        UserDAOTestHelpers.assertResultPairAreEqual(ACTUAL_PAIR, EXPECTED_PAIR);
+    }
 }
