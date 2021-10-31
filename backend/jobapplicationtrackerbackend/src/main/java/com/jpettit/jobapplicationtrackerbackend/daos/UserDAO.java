@@ -14,6 +14,7 @@ import java.util.Optional;
 public class UserDAO implements DAO<User> {
     private final Connection jobAppConnection;
     private final ProjectEnvironment environment;
+    public static final String NONEXISTANT_SESSIONID = "Session id doesn't exist";
 
     public UserDAO(Connection connection, ProjectEnvironment environment) {
         this.jobAppConnection = connection;
@@ -84,9 +85,17 @@ public class UserDAO implements DAO<User> {
             ResultSet set = statement.executeQuery(query);
             final String USERNAME = buildUsername(set);
 
-            return new ResultPair<>(USERNAME, "");
+            return buildGetUsernameResultPair(USERNAME);
         } catch (SQLException exception) {
             return new ResultPair<>("", exception.getMessage());
+        }
+    }
+
+    private ResultPair<String> buildGetUsernameResultPair(String username) {
+        if (username.equals("")) {
+            return new ResultPair<>("", NONEXISTANT_SESSIONID);
+        } else {
+            return new ResultPair<>(username, "");
         }
     }
 
