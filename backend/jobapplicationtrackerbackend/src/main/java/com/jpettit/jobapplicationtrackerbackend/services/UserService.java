@@ -4,6 +4,7 @@ import com.jpettit.jobapplicationtrackerbackend.daos.UserDAO;
 import com.jpettit.jobapplicationtrackerbackend.models.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -79,6 +80,10 @@ public class UserService {
         } else {
             return new UserServiceResultPair<>("", "Couldn't update session");
         }
+    }
+
+    public ResultPair<String> getUsernameBySessionId(String sessionId) {
+        return userDAO.getUsernameBySessionId(sessionId);
     }
 
     private String hashPassword(String password) {

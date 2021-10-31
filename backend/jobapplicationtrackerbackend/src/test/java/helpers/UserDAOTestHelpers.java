@@ -6,9 +6,11 @@ import com.jpettit.jobapplicationtrackerbackend.enums.UserFields;
 import com.jpettit.jobapplicationtrackerbackend.helpers.ProjectEnvironment;
 import com.jpettit.jobapplicationtrackerbackend.helpers.UserQuerier;
 import com.jpettit.jobapplicationtrackerbackend.models.Login;
+import com.jpettit.jobapplicationtrackerbackend.models.ResultPair;
 import com.jpettit.jobapplicationtrackerbackend.models.Session;
 import com.jpettit.jobapplicationtrackerbackend.models.User;
 import org.checkerframework.checker.units.qual.A;
+import org.junit.jupiter.api.Assertions;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.sql.*;
@@ -50,6 +52,21 @@ public class UserDAOTestHelpers {
       pair.assertEqual(getUserCountErrorMessage(pair));
    }
 
+   public static void assertResultPairAreEqual(final ResultPair<String> ACTUAL,
+                                               final ResultPair<String> EXPECTED) {
+      final String ACTUAL_VALUE = ACTUAL.getValue();
+      final String EXPECTED_VALUE = EXPECTED.getValue();
+      final String ACTUAL_ERR_MSG = ACTUAL.getMessage();
+      final String EXPECTED_ERR_MSG = EXPECTED.getMessage();
+
+      final String[] ERR_MSGS = {
+              String.format("For value: %s", getErrorMessage(ACTUAL_VALUE, EXPECTED_VALUE)),
+              String.format("For error message: %s", getErrorMessage(ACTUAL_ERR_MSG, EXPECTED_ERR_MSG))
+      };
+
+      Assertions.assertEquals(EXPECTED_VALUE, ACTUAL_VALUE, ERR_MSGS[0]);
+      Assertions.assertEquals(EXPECTED_ERR_MSG, ACTUAL_ERR_MSG, ERR_MSGS[1]);
+   }
    private static String getUserCountErrorMessage(final TestPair<Integer> pair) {
       return "Expected " + pair.getExpectedValue() + ", got " + pair.getActualValue() + " instead.";
    }
@@ -251,5 +268,9 @@ public class UserDAOTestHelpers {
       assertEquals(expectedUser.getEmail(), actualUser.getEmail());
       assertEquals(expectedUser.getPassword(), actualUser.getPassword());
       assertEquals(expectedUser.getSession(), actualUser.getSession());
+   }
+
+   public static String getErrorMessage(final String ACTUAL, final String EXPECTED) {
+      return String.format("Expected %s, got %s instead.", EXPECTED, ACTUAL);
    }
 }

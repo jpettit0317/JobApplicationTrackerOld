@@ -2,6 +2,8 @@ package com.jpettit.jobapplicationtrackerbackend.helpers;
 
 import com.jpettit.jobapplicationtrackerbackend.models.Session;
 
+import java.util.HashMap;
+
 public class UserQuerier extends Querier {
     private ProjectEnvironment env;
 
@@ -15,13 +17,18 @@ public class UserQuerier extends Querier {
 
     @Override
     public String getTableName(ProjectEnvironment env) {
-        if (env == ProjectEnvironment.TEST) {
-            return "testusers";
-        } else if (env == ProjectEnvironment.PROD) {
-            return "users";
-        } else {
-            return "devusers";
-        }
+        HashMap<ProjectEnvironment, String> map = new HashMap<>();
+        final String[] TABLE_NAMES = {
+                "testusers",
+                "users",
+                "devusers"
+        };
+
+        map.put(ProjectEnvironment.TEST, TABLE_NAMES[0]);
+        map.put(ProjectEnvironment.PROD, TABLE_NAMES[1]);
+        map.put(ProjectEnvironment.DEV, TABLE_NAMES[2]);
+
+        return map.getOrDefault(env, TABLE_NAMES[2]);
     }
 
     public String buildGetUserByIdQuery(Long id) {
@@ -42,6 +49,13 @@ public class UserQuerier extends Querier {
         final String tableName = getTableName(env);
         return String.format("SELECT userid, username, email, password, sessionname, expdate" +
                 " FROM %s ORDER BY userid ASC;", tableName);
+    }
+
+    public String buildGetUsernameBySessionIdQuery(String sessionId) {
+        final String TABLE_NAME = getTableName(env);
+
+        return String.format("SELECT username FROM %s WHERE sessionname = '%s';",
+                TABLE_NAME, sessionId);
     }
 
     public String buildGetPasswordForUserQuery(String username) {

@@ -2,11 +2,8 @@ package com.jpettit.jobapplicationtrackerbackend.daos;
 
 import com.jpettit.jobapplicationtrackerbackend.database.JobAppTrackerConnection;
 import com.jpettit.jobapplicationtrackerbackend.helpers.ProjectEnvironment;
-import com.jpettit.jobapplicationtrackerbackend.models.Login;
-import com.jpettit.jobapplicationtrackerbackend.models.Session;
-import com.jpettit.jobapplicationtrackerbackend.models.User;
+import com.jpettit.jobapplicationtrackerbackend.models.*;
 
-import com.jpettit.jobapplicationtrackerbackend.models.UserServiceResultPair;
 import helpers.TestPair;
 import helpers.UserDAOTestHelpers;
 import org.junit.jupiter.api.*;
@@ -207,5 +204,17 @@ class UserDAOTest {
 
         Assertions.assertEquals("", ACTUAL_PAIR.getValue());
         Assertions.assertNotEquals("", ACTUAL_PAIR.getMessage());
+    }
+
+    @Test
+    public void testGetUsernameBySessionId_whenPassingInAnEmptySessionId_shouldReturnResultPairWithNoValueAndEmptySessionId() {
+        users = UserDAOTestHelpers.createDefaultTestUsers();
+        UserDAOTestHelpers.insertManyUsers(testConnection.get(), users);
+
+        final String SESSION_ID = "";
+        final ResultPair<String> ACTUAL_PAIR = sut.getUsernameBySessionId(SESSION_ID);
+        final ResultPair<String> EXPECTED_PAIR = new ResultPair<>("", "Empty sessionId");
+
+        UserDAOTestHelpers.assertResultPairAreEqual(ACTUAL_PAIR, EXPECTED_PAIR);
     }
 }

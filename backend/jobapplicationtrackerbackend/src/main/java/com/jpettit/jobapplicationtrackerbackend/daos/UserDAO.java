@@ -3,10 +3,7 @@ package com.jpettit.jobapplicationtrackerbackend.daos;
 import com.jpettit.jobapplicationtrackerbackend.enums.UserFields;
 import com.jpettit.jobapplicationtrackerbackend.helpers.ProjectEnvironment;
 import com.jpettit.jobapplicationtrackerbackend.helpers.UserQuerier;
-import com.jpettit.jobapplicationtrackerbackend.models.Login;
-import com.jpettit.jobapplicationtrackerbackend.models.Session;
-import com.jpettit.jobapplicationtrackerbackend.models.User;
-import com.jpettit.jobapplicationtrackerbackend.models.UserServiceResultPair;
+import com.jpettit.jobapplicationtrackerbackend.models.*;
 
 import java.sql.*;
 import java.time.LocalDate;
@@ -76,6 +73,36 @@ public class UserDAO implements DAO<User> {
         }
     }
 
+    public ResultPair<String> getUsernameBySessionId(String sessionId) {
+        if (sessionId.equals("")) {
+            return new ResultPair<>("", "Empty sessionId");
+        }
+        try {
+            final UserQuerier querier = new UserQuerier(environment);
+            final String query = querier.buildGetUsernameBySessionIdQuery(sessionId);
+            Statement statement = jobAppConnection.createStatement();
+            ResultSet set = statement.executeQuery(query);
+            final String USERNAME = buildUsername(set);
+
+            return new ResultPair<>(USERNAME, "");
+        } catch (SQLException exception) {
+            return new ResultPair<>("", exception.getMessage());
+        }
+    }
+
+    private String buildUsername(ResultSet set) {
+        try {
+            if (!set.next()) {
+                return "";
+            }
+            final String USERNAME = set.getString(UserFields.userName);
+            return USERNAME;
+        } catch (SQLException sqlException) {
+            System.out.println("Error: " + sqlException.getMessage());
+            sqlException.printStackTrace();
+            return "";
+        }
+    }
     private String buildPassword(ResultSet set) {
         try {
             if (!set.next()) {

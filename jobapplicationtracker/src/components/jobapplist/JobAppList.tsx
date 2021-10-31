@@ -9,34 +9,42 @@ import useJobAppListStyles from "./JobAppListStyles";
 import getJobAppCard from "../../functions/networkCalls/getJobAppCard";
 import URLPath from "../../enums/URLPath_enum";
 import { getCookie } from "../../functions/utils/cookieUtil";
+import CookieFields from "../../enums/CookieFields_enum";
 
 const JobAppList: React.FC<JobAppListProps> = props => {
     const classes = useJobAppListStyles();
 
     const [jobApps, setJobApps] = useState<IJobApp[]>(props.jobApps);
-    
-    const handleData = async () => {
-        const sessionId = getCookie("sessionId");
 
+    useEffect( () => {
+        fetchData();
+    }, []);
+   
+    const fetchData = () => {
+        const sessionId = getCookie(CookieFields.sessionId);
+        handleData(sessionId ?? "");
+    }
+
+    const handleData = async (sessionId: string) => {
         try {
-            if (sessionId !== null) {
+            if (sessionId !== null && sessionId !== "") {
                 const response = await getJobAppCard(URLPath.getJobAppCard, sessionId);
-                console.log(`JobApps: ${JSON.stringify(response.data)}`);
+                if (response.data !== undefined) {
+                    initData(response.data);
+                }
             } else {
-                setJobApps([]);
+                initData([]);
             }
         } catch (error: any) {
             console.log(`Error: ${JSON.stringify(error)}`);
-            setJobApps([]);
+            initData([]);
         }
     }
 
-    useEffect( () => {
-        console.log("In use effect");
+    const initData = (newJobApps: IJobApp[]) => {
+        setJobApps(newJobApps);
+    }
 
-        handleData();
-    }, []);
-    
     const onAddJobAppButtonPressed = () => {
 
     }

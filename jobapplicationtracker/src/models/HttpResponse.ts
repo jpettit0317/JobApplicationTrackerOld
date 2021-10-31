@@ -8,6 +8,14 @@ class HttpResponse<T> {
         this.reasonForFailure = reasonForFailure;
         this.data = data;
     }
+
+    isError = (): boolean => {
+        return this.status >= 300;
+    }
+
+    isStatusCodeEqual = (statusCode: number): boolean => {
+        return this.status === statusCode;
+    }
 }
 
 export default HttpResponse;
