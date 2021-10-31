@@ -21,6 +21,13 @@ public class UserQuerierTestHelpers {
         return String.format("SELECT username FROM %s WHERE sessionname = '%s';", TABLE_NAME, sessionId);
     }
 
+    public static String getExpectedGetExpDateBySessionId(ProjectEnvironment env, String sessionId) {
+        final String TABLE_NAME = getTableNameForUser(env);
+
+        return String.format("SELECT expdate FROM %s WHERE sessionname = '%s';",
+                TABLE_NAME, sessionId);
+    }
+
     private static String getTableNameForUser(ProjectEnvironment env) {
         HashMap<ProjectEnvironment, String> map = new HashMap<>();
 

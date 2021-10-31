@@ -76,4 +76,11 @@ public class UserQuerier extends Querier {
 
         return String.format("UPDATE %s SET sessionname = ?, expdate = ? WHERE username = ?;", TABLE_NAME);
     }
+
+    public String getSessionExpirationDateBySessionId(final String SESSION_ID) {
+        final String TABLE_NAME = getTableName(env);
+
+        return String.format("SELECT expdate FROM %s WHERE sessionname = '%s';",
+                TABLE_NAME, SESSION_ID);
+    }
 }

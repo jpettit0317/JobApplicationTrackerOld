@@ -73,4 +73,17 @@ class UserQuerierTest {
         }
     }
 
+    @Test
+    public void testBuildGetSessionExpirationDateBySessionId_whenPassedInExistingSessionIDAndEnvironment_shouldReturnQueryWithExpDate() {
+        final String SESSION_ID = "2";
+
+        for (ProjectEnvironment env : environments) {
+            sut = new UserQuerier(env);
+
+            final String EXPECT_QUERY = UserQuerierTestHelpers.getExpectedGetExpDateBySessionId(env, SESSION_ID);
+            final String ACTUAL_QUERY = sut.getSessionExpirationDateBySessionId(SESSION_ID);
+
+            UserQuerierTestHelpers.assertQueriesAreEqual(ACTUAL_QUERY, EXPECT_QUERY);
+        }
+    }
 }
