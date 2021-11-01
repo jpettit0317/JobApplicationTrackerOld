@@ -156,4 +156,30 @@ class UserServiceTest {
         Assertions.assertEquals(ERROR_MESSAGE, ACTUAL_PAIR.getMessage());
         Assertions.assertEquals("", ACTUAL_PAIR.getValue());
     }
+
+    @Test
+    public void testGetUsernameBySessionId_whenPassedInValidSessionId_shouldReturnAssociatedUsernameAndNoErrorMessage() {
+        final User USER = UserServiceHelper.user;
+        final String SESSION_ID = USER.getSession().getSessionName();
+        final ResultPair<String> EXPECTED_PAIR = new ResultPair<>(USER.getUsername(), "");
+
+        Mockito.when(userDAO.getUsernameBySessionId(Mockito.anyString())).thenReturn(EXPECTED_PAIR);
+
+        final ResultPair<String> ACTUAL_PAIR = sut.getUsernameBySessionId(SESSION_ID);
+
+        UserServiceHelper.assertThatStringResultPairsAreEqual(ACTUAL_PAIR, EXPECTED_PAIR);
+    }
+
+    @Test
+    public void testGetUsernameBySessionId_whenPassedEmptySessionId_shouldReturnNoUsernameAndEmptySessionIdErrorMessage() {
+        final User USER = UserServiceHelper.user;
+        final String SESSION_ID = "";
+        final ResultPair<String> EXPECTED_PAIR = new ResultPair<>("", userDAO.EMPTY_SESSIONID);
+
+        Mockito.when(userDAO.getUsernameBySessionId(SESSION_ID)).thenReturn(EXPECTED_PAIR);
+
+        final ResultPair<String> ACTUAL_PAIR = sut.getUsernameBySessionId(SESSION_ID);
+
+        UserServiceHelper.assertThatStringResultPairsAreEqual(ACTUAL_PAIR, EXPECTED_PAIR);
+    }
 }
