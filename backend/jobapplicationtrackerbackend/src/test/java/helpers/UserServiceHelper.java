@@ -1,6 +1,7 @@
 package helpers;
 
 import com.jpettit.jobapplicationtrackerbackend.models.*;
+import org.junit.jupiter.api.Assertions;
 
 import java.time.LocalDate;
 import java.util.Optional;
@@ -27,6 +28,18 @@ public class UserServiceHelper {
 
         countPair.assertEqual(errorMessages[0]);
         messagePair.assertEqual(errorMessages[1]);
+    }
+
+    public static void assertThatStringResultPairsAreEqual(ResultPair<String> ACTUAL, ResultPair<String> EXPECTED) {
+        final String VALUE_ERR_MSG = getErrorMessage(ACTUAL.getValue(), EXPECTED.getValue());
+        final String MESSAGE_ERR_MSG = getErrorMessage(ACTUAL.getMessage(), EXPECTED.getMessage());
+
+        Assertions.assertEquals(ACTUAL.getValue(), EXPECTED.getValue(), VALUE_ERR_MSG);
+        Assertions.assertEquals(ACTUAL.getMessage(), EXPECTED.getMessage(), MESSAGE_ERR_MSG);
+    }
+
+    public static String getErrorMessage(final String ACTUAL, final String EXPECTED) {
+        return String.format("Expected %s, got %s instead.", EXPECTED, ACTUAL);
     }
 
     private static String errorMessageForUserServiceUserPairCount(TestPair<Integer> pair) {
