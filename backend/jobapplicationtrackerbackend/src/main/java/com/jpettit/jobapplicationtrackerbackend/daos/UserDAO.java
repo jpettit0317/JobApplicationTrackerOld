@@ -1,6 +1,7 @@
 package com.jpettit.jobapplicationtrackerbackend.daos;
 
 import com.jpettit.jobapplicationtrackerbackend.enums.UserFields;
+import com.jpettit.jobapplicationtrackerbackend.helpers.DateConverter;
 import com.jpettit.jobapplicationtrackerbackend.helpers.ProjectEnvironment;
 import com.jpettit.jobapplicationtrackerbackend.helpers.UserQuerier;
 import com.jpettit.jobapplicationtrackerbackend.models.*;
@@ -15,6 +16,7 @@ public class UserDAO implements DAO<User> {
     private final Connection jobAppConnection;
     private final ProjectEnvironment environment;
     public static final String NONEXISTANT_SESSIONID = "Session id doesn't exist";
+    public static final String EMPTY_SESSIONID = "Empty sessionId";
 
     public UserDAO(Connection connection, ProjectEnvironment environment) {
         this.jobAppConnection = connection;
@@ -76,7 +78,7 @@ public class UserDAO implements DAO<User> {
 
     public ResultPair<String> getUsernameBySessionId(String sessionId) {
         if (sessionId.equals("")) {
-            return new ResultPair<>("", "Empty sessionId");
+            return new ResultPair<>("", EMPTY_SESSIONID);
         }
         try {
             final UserQuerier querier = new UserQuerier(environment);
@@ -84,10 +86,28 @@ public class UserDAO implements DAO<User> {
             Statement statement = jobAppConnection.createStatement();
             ResultSet set = statement.executeQuery(query);
             final String USERNAME = buildUsername(set);
+            final ResultPair<String> RESULT = buildGetUsernameResultPair(USERNAME);
 
-            return buildGetUsernameResultPair(USERNAME);
+            return RESULT;
         } catch (SQLException exception) {
             return new ResultPair<>("", exception.getMessage());
+        }
+    }
+
+    public ResultPair<Optional<LocalDate>> getSessionExpDateBySessionId(final String SESSION_ID) {
+        if (SESSION_ID.equals("")) {
+            return new ResultPair<>(Optional.empty(), EMPTY_SESSIONID);
+        }
+
+        final UserQuerier QUERIER = new UserQuerier(environment);
+        final String QUERY = QUERIER.getSessionExpirationDateBySessionId(SESSION_ID);
+        try {
+            final Statement statement = jobAppConnection.createStatement();
+            ResultSet set = statement.executeQuery(QUERY);
+            return buildGetSessionExpDateBySessionId(set);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return new ResultPair<>(Optional.empty(), e.getMessage());
         }
     }
 
@@ -96,6 +116,21 @@ public class UserDAO implements DAO<User> {
             return new ResultPair<>("", NONEXISTANT_SESSIONID);
         } else {
             return new ResultPair<>(username, "");
+        }
+    }
+
+    private ResultPair<Optional<LocalDate>> buildGetSessionExpDateBySessionId(ResultSet set) {
+        try {
+            if (!set.next()) {
+                return new ResultPair<>(Optional.empty(), NONEXISTANT_SESSIONID);
+            }
+            final Date EXP_DATE = set.getDate(UserFields.expDate);
+            final LocalDate EXP_DATE_LOCAL_DATE = DateConverter.convertDateToLocalDate(EXP_DATE);
+
+            return new ResultPair<>(Optional.of(EXP_DATE_LOCAL_DATE), "");
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return new ResultPair<>(Optional.empty(), e.getMessage());
         }
     }
 
@@ -326,6 +361,7 @@ public class UserDAO implements DAO<User> {
             System.out.println("Error: " + sqlException.getMessage());
         }
     }
+
 
     @Override
     public String toString() {

@@ -83,6 +83,15 @@ public class UserDAOTestHelpers {
       assertFalse(user.isPresent(), getUserIsNullErrorMessage(user));
    }
 
+   public static void assertLocalDateResultPair(final ResultPair<Optional<LocalDate>> ACTUAL,
+                                                final ResultPair<Optional<LocalDate>> EXP) {
+      final String DATE_MSG = getErrorMessage(ACTUAL.getValue().toString(), EXP.getValue().toString());
+      final String ERR_MSG = getErrorMessage(ACTUAL.getMessage(), EXP.getMessage());
+
+      Assertions.assertEquals(ACTUAL.getValue(), EXP.getValue(), DATE_MSG);
+      Assertions.assertEquals(ACTUAL.getMessage(), EXP.getMessage(), ERR_MSG);
+   }
+
    private static String getUserIsNotNullErrorMessage(final Optional<User> user) {
       return "User is null";
    }
@@ -145,6 +154,10 @@ public class UserDAOTestHelpers {
          e.printStackTrace();
          return -1;
       }
+   }
+
+   public static ResultPair<Optional<LocalDate>> getExpectedPair(final LocalDate EXP_DATE, final String MSG) {
+      return new ResultPair<>(Optional.of(EXP_DATE), MSG);
    }
 
    private static int insertUsers(PreparedStatement statement, ArrayList<User> users) {

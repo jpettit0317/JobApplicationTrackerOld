@@ -213,7 +213,7 @@ class UserDAOTest {
 
         final String SESSION_ID = "";
         final ResultPair<String> ACTUAL_PAIR = sut.getUsernameBySessionId(SESSION_ID);
-        final ResultPair<String> EXPECTED_PAIR = new ResultPair<>("", "Empty sessionId");
+        final ResultPair<String> EXPECTED_PAIR = new ResultPair<>("", sut.EMPTY_SESSIONID);
 
         UserDAOTestHelpers.assertResultPairAreEqual(ACTUAL_PAIR, EXPECTED_PAIR);
     }
@@ -242,5 +242,45 @@ class UserDAOTest {
         ResultPair<String> ACTUAL_PAIR = sut.getUsernameBySessionId(SESSION_ID);
 
         UserDAOTestHelpers.assertResultPairAreEqual(ACTUAL_PAIR, EXPECTED_PAIR);
+    }
+
+    @Test
+    public void testGetSessionExpDateBySessionId_whenPassingInFirstSessionId_shouldReturnJan12000() {
+        users = UserDAOTestHelpers.createDefaultTestUsers();
+        UserDAOTestHelpers.insertManyUsers(testConnection.get(), users);
+
+        final Session SESSION = users.get(0).getSession();
+        final LocalDate EXP_DATE = SESSION.getExpirationDate();
+
+        final ResultPair<Optional<LocalDate>> EXPECTED_PAIR = UserDAOTestHelpers.getExpectedPair(EXP_DATE, "");
+        final ResultPair<Optional<LocalDate>> ACTUAL_PAIR = sut.getSessionExpDateBySessionId(SESSION.getSessionName());
+
+        UserDAOTestHelpers.assertLocalDateResultPair(ACTUAL_PAIR, EXPECTED_PAIR);
+    }
+
+    @Test
+    public void testGetSessionExpDateBySessionId_whenPassingInThirdSessionId_shouldReturnEmptyOptional() {
+        users = UserDAOTestHelpers.createDefaultTestUsers();
+        UserDAOTestHelpers.insertManyUsers(testConnection.get(), users);
+
+        final String SESSION_ID = "third";
+
+        final ResultPair<Optional<LocalDate>> EXPECTED = new ResultPair<>(Optional.empty(), sut.NONEXISTANT_SESSIONID);
+        final ResultPair<Optional<LocalDate>> ACTUAL = sut.getSessionExpDateBySessionId(SESSION_ID);
+
+        UserDAOTestHelpers.assertLocalDateResultPair(ACTUAL, EXPECTED);
+    }
+
+    @Test
+    public void testGetSessionExpDateBySessionId_whenPassingInEmptyString_shouldReturnEmptyDateAndSessionIdDoesntExist() {
+        users = UserDAOTestHelpers.createDefaultTestUsers();
+        UserDAOTestHelpers.insertManyUsers(testConnection.get(), users);
+
+        final String SESSION_ID = "";
+
+        final ResultPair<Optional<LocalDate>> EXPECTED = new ResultPair<>(Optional.empty(), sut.EMPTY_SESSIONID);
+        final ResultPair<Optional<LocalDate>> ACTUAL = sut.getSessionExpDateBySessionId(SESSION_ID);
+
+        UserDAOTestHelpers.assertLocalDateResultPair(ACTUAL, EXPECTED);
     }
 }
