@@ -30,6 +30,7 @@ const JobAppList: React.FC<JobAppListProps> = props => {
             if (sessionId !== null && sessionId !== "") {
                 const response = await getJobAppCard(URLPath.getJobAppCard, sessionId);
                 if (response.data !== undefined) {
+                    console.log(`Response is ${JSON.stringify(response)}`);
                     initData(response.data);
                 }
             } else {

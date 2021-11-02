@@ -3,6 +3,7 @@ package com.jpettit.jobapplicationtrackerbackend.services;
 import com.jpettit.jobapplicationtrackerbackend.daos.UserDAO;
 import com.jpettit.jobapplicationtrackerbackend.models.*;
 import helpers.UserServiceHelper;
+import org.checkerframework.checker.nullness.Opt;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -17,6 +18,7 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
@@ -181,5 +183,44 @@ class UserServiceTest {
         final ResultPair<String> ACTUAL_PAIR = sut.getUsernameBySessionId(SESSION_ID);
 
         UserServiceHelper.assertThatStringResultPairsAreEqual(ACTUAL_PAIR, EXPECTED_PAIR);
+    }
+
+    @Test
+    public void testHasSessionExpired_whenPassedInAccessDateOfDec201999AndSessionExpDateIsJan12000_shouldReturnFalse() {
+        final Session SESSION = UserServiceHelper.user.getSession();
+        final ResultPair<Optional<LocalDate>> EXPECTED_PAIR = new ResultPair<>(Optional.of(SESSION.getExpirationDate()), "");
+        final LocalDate DEC20_1999 = LocalDate.of(1999, 12, 20);
+
+        Mockito.when(userDAO.getSessionExpDateBySessionId(SESSION.getSessionName())).thenReturn(EXPECTED_PAIR);
+
+        final ResultPair<Boolean> ACTUAL = sut.hasSessionExpired(DEC20_1999, SESSION.getSessionName());
+
+        UserServiceHelper.assertSessionHasNotExpired(ACTUAL, DEC20_1999, EXPECTED_PAIR.getValue().get());
+    }
+
+    @Test
+    public void testHasSessionExpired_whenPassedInAccessDateOfJan2_2000AndSessionExpDateIsJan1_2000_shouldReturnFalse() {
+        final Session SESSION = UserServiceHelper.user.getSession();
+        final ResultPair<Optional<LocalDate>> EXPECTED_PAIR = new ResultPair<>(Optional.of(SESSION.getExpirationDate()), "");
+        final LocalDate JAN_2_2000 = LocalDate.of(2000, 1, 2);
+
+        Mockito.when(userDAO.getSessionExpDateBySessionId(SESSION.getSessionName())).thenReturn(EXPECTED_PAIR);
+
+        final ResultPair<Boolean> ACTUAL = sut.hasSessionExpired(JAN_2_2000, SESSION.getSessionName());
+
+        UserServiceHelper.assertSessionHasExpired(ACTUAL, JAN_2_2000, EXPECTED_PAIR.getValue().get());
+    }
+
+    @Test
+    public void testHasSessionExpired_whenSessionCantBeFound_shouldReturnTrueAndCantFindSessionWithThatId() {
+        final ResultPair<Optional<LocalDate>> INVALID_PAIR = new ResultPair<>(Optional.empty(), sut.SESSION_NOT_FOUND);
+        final Session SESSION = UserServiceHelper.user.getSession();
+
+        Mockito.when(userDAO.getSessionExpDateBySessionId(Mockito.anyString())).thenReturn(INVALID_PAIR);
+
+        final ResultPair<Boolean> ACTUAL = sut.hasSessionExpired(SESSION.getExpirationDate(), SESSION.getSessionName());
+        final ResultPair<Boolean> EXPECTED = new ResultPair<>(true, sut.SESSION_NOT_FOUND);
+
+        UserServiceHelper.assertHasSessionExpiredPair(ACTUAL, EXPECTED);
     }
 }

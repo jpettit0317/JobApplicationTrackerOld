@@ -15,6 +15,7 @@ public class UserService {
     private final Integer strength;
     private PasswordEncoder encoder;
     private SessionManager sessionManager;
+    public final String SESSION_NOT_FOUND = "Can't find session with that id.";
 
     public UserService(UserDAO newUserDAO, Integer strength,
                        PasswordEncoder encoder, SessionManager sessionManager) {
@@ -84,6 +85,21 @@ public class UserService {
 
     public ResultPair<String> getUsernameBySessionId(String sessionId) {
         return userDAO.getUsernameBySessionId(sessionId);
+    }
+
+    public ResultPair<Boolean> hasSessionExpired(final LocalDate ACCESS_DATE, final String SESSION_ID) {
+        final ResultPair<Optional<LocalDate>> PAIR = userDAO.getSessionExpDateBySessionId(SESSION_ID);
+        System.out.println("Date is " + PAIR.toString());
+
+        if (!PAIR.getValue().isPresent()) {
+            return new ResultPair<>(true, SESSION_NOT_FOUND);
+        }
+
+        final LocalDate EXP_DATE = PAIR.getValue().get();
+        final boolean RESULT = ACCESS_DATE.isAfter(EXP_DATE);
+
+
+        return new ResultPair<>(RESULT, "");
     }
 
     private String hashPassword(String password) {

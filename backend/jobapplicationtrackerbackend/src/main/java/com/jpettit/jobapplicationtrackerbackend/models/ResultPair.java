@@ -11,6 +11,11 @@ public class ResultPair<T> implements DaoPair<T> {
         this.ERROR_MESSAGE = ERROR_MSG;
     }
 
+    public ResultPair(ResultPair<T> newPair) {
+        this.VALUE = newPair.getValue();
+        this.ERROR_MESSAGE = newPair.getMessage();
+    }
+
     public T getValue() {
         return VALUE;
     }

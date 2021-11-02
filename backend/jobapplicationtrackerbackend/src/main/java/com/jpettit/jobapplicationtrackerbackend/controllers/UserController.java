@@ -3,12 +3,15 @@ package com.jpettit.jobapplicationtrackerbackend.controllers;
 import com.jpettit.jobapplicationtrackerbackend.JobapplicationtrackerbackendApplication;
 import com.jpettit.jobapplicationtrackerbackend.daos.UserDAO;
 import com.jpettit.jobapplicationtrackerbackend.database.JobAppTrackerConnection;
+import com.jpettit.jobapplicationtrackerbackend.enums.AppProperties;
 import com.jpettit.jobapplicationtrackerbackend.helpers.ProjectEnvironment;
+import com.jpettit.jobapplicationtrackerbackend.helpers.ProjectEnvironmentReader;
 import com.jpettit.jobapplicationtrackerbackend.helpers.UserControllerURL;
 import com.jpettit.jobapplicationtrackerbackend.models.*;
 import com.jpettit.jobapplicationtrackerbackend.services.UserService;
 import javafx.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,21 +30,15 @@ import java.util.Optional;
 
 @RestController
 public class UserController {
-    @PostConstruct
-    public void postConstruct() {
-        System.out.println("In post construct at time ");
-        System.out.println("Environment is " + JobapplicationtrackerbackendApplication.environment);
-    }
+    @Value(AppProperties.appEnv)
+    String environment;
 
     @PostMapping(UserControllerURL.addUser)
     public ResponseEntity<String> addUser(@RequestBody User newUser) {
-        System.out.println("In addUser");
         final UserService service = createUserService();
         final UserServiceResultPair<String> PAIR = service.createUser(newUser);
 
-        System.out.println(PAIR.toString());
         if(!PAIR.getMessage().equals("")) {
-            System.out.println(String.format("The response is %s", PAIR.getMessage()));
             return new ResponseEntity<>(PAIR.getMessage(), HttpStatus.NOT_FOUND);
         } else {
             return new ResponseEntity<>(PAIR.getValue(), HttpStatus.CREATED);
@@ -62,11 +59,9 @@ public class UserController {
 
     private UserService createUserService() {
         final Optional<Connection> connection = JobAppTrackerConnection.createConnection();
-        final ProjectEnvironment appEnvironment = JobapplicationtrackerbackendApplication.environment;
+        final ProjectEnvironment appEnvironment = ProjectEnvironmentReader.getEnvironment(environment);
         final PasswordEncoder encoder = PasswordEncoder.createPasswordEncoder(12);
 
-        System.out.println(connection.get().toString());
-        System.out.println("The app environment is " + appEnvironment);
         UserDAO dao = new UserDAO(connection.get(), appEnvironment);
 
         return new UserService(dao, 12, encoder, new SessionManager());
