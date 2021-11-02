@@ -1,10 +1,17 @@
 package com.jpettit.jobapplicationtrackerbackend.daos;
 
+import com.jpettit.jobapplicationtrackerbackend.database.JobAppTrackerConnection;
+import com.jpettit.jobapplicationtrackerbackend.enums.AppProperties;
 import com.jpettit.jobapplicationtrackerbackend.enums.UserFields;
 import com.jpettit.jobapplicationtrackerbackend.helpers.DateConverter;
 import com.jpettit.jobapplicationtrackerbackend.helpers.ProjectEnvironment;
+import com.jpettit.jobapplicationtrackerbackend.helpers.ProjectEnvironmentReader;
 import com.jpettit.jobapplicationtrackerbackend.helpers.UserQuerier;
 import com.jpettit.jobapplicationtrackerbackend.models.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import java.sql.*;
 import java.time.LocalDate;
@@ -12,15 +19,20 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
 
+@Repository
 public class UserDAO implements DAO<User> {
+    @Value(AppProperties.appEnv)
+    String env;
+
     private final Connection jobAppConnection;
     private final ProjectEnvironment environment;
+
     public static final String NONEXISTANT_SESSIONID = "Session id doesn't exist";
     public static final String EMPTY_SESSIONID = "Empty sessionId";
 
-    public UserDAO(Connection connection, ProjectEnvironment environment) {
-        this.jobAppConnection = connection;
-        this.environment = environment;
+    public UserDAO() {
+        this.jobAppConnection = JobAppTrackerConnection.createConnection().get();
+        this.environment = ProjectEnvironmentReader.getEnvironment(env);
     }
 
     public Optional<User> getById(Long id) {

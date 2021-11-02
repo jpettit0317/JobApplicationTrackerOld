@@ -12,5 +12,4 @@ public interface DAO<T> {
     T update(T t);
     T delete(T t);
     int insertMany(Collection<T> list);
-    void closeConnection() throws SQLException;
 }

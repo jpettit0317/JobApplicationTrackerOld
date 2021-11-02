@@ -219,7 +219,7 @@ public class UserDAOTestHelpers {
    }
 
    public static UserDAO createSut(ProjectEnvironment env, Connection connection) {
-      return new UserDAO(connection, env);
+      return new UserDAO();
    }
 
    public static Date convertLocalDateToDate(LocalDate localDate) {

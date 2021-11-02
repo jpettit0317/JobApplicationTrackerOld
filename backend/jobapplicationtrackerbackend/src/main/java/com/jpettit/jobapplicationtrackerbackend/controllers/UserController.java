@@ -8,6 +8,7 @@ import com.jpettit.jobapplicationtrackerbackend.helpers.ProjectEnvironment;
 import com.jpettit.jobapplicationtrackerbackend.helpers.ProjectEnvironmentReader;
 import com.jpettit.jobapplicationtrackerbackend.helpers.UserControllerURL;
 import com.jpettit.jobapplicationtrackerbackend.models.*;
+import com.jpettit.jobapplicationtrackerbackend.services.JobApplicationService;
 import com.jpettit.jobapplicationtrackerbackend.services.UserService;
 import javafx.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,10 +34,11 @@ public class UserController {
     @Value(AppProperties.appEnv)
     String environment;
 
-    @PostMapping(UserControllerURL.addUser)
+    @Autowired
+    UserService userService;
+
     public ResponseEntity<String> addUser(@RequestBody User newUser) {
-        final UserService service = createUserService();
-        final UserServiceResultPair<String> PAIR = service.createUser(newUser);
+        final UserServiceResultPair<String> PAIR = userService.createUser(newUser);
 
         if(!PAIR.getMessage().equals("")) {
             return new ResponseEntity<>(PAIR.getMessage(), HttpStatus.NOT_FOUND);
@@ -47,23 +49,12 @@ public class UserController {
 
     @PostMapping(UserControllerURL.loginUser)
     public ResponseEntity<String> loginUser(@RequestBody Login login) {
-        final UserService service = createUserService();
-        final UserServiceResultPair<String> result = service.validateUserLogin(login);
+        final UserServiceResultPair<String> result = userService.validateUserLogin(login);
 
         if (result.getMessage().equals("")) {
             return new ResponseEntity<>(result.getValue(), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(result.getMessage(), HttpStatus.NOT_FOUND);
         }
-    }
-
-    private UserService createUserService() {
-        final Optional<Connection> connection = JobAppTrackerConnection.createConnection();
-        final ProjectEnvironment appEnvironment = ProjectEnvironmentReader.getEnvironment(environment);
-        final PasswordEncoder encoder = PasswordEncoder.createPasswordEncoder(12);
-
-        UserDAO dao = new UserDAO(connection.get(), appEnvironment);
-
-        return new UserService(dao, 12, encoder, new SessionManager());
     }
 }

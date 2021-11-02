@@ -1,28 +1,37 @@
 package com.jpettit.jobapplicationtrackerbackend.services;
 
 import com.jpettit.jobapplicationtrackerbackend.daos.UserDAO;
+import com.jpettit.jobapplicationtrackerbackend.database.JobAppTrackerConnection;
+import com.jpettit.jobapplicationtrackerbackend.enums.AppProperties;
+import com.jpettit.jobapplicationtrackerbackend.helpers.PasswordEncoder;
+import com.jpettit.jobapplicationtrackerbackend.helpers.ProjectEnvironment;
+import com.jpettit.jobapplicationtrackerbackend.helpers.ProjectEnvironmentReader;
 import com.jpettit.jobapplicationtrackerbackend.models.*;
 
+import java.sql.Connection;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
 
+@Service
 public class UserService {
+    @Autowired
     private UserDAO userDAO;
-    private final Integer strength;
-    private PasswordEncoder encoder;
-    private SessionManager sessionManager;
+
+    @Autowired
+    PasswordEncoder passwordEncoder;
+
     public final String SESSION_NOT_FOUND = "Can't find session with that id.";
 
-    public UserService(UserDAO newUserDAO, Integer strength,
-                       PasswordEncoder encoder, SessionManager sessionManager) {
+    public UserService(UserDAO newUserDAO, PasswordEncoder encoder) {
         this.userDAO = newUserDAO;
-        this.strength = strength;
-        this.encoder = encoder;
-        this.sessionManager = sessionManager;
+        this.passwordEncoder = encoder;
     }
 
     private String printUserDAO(UserDAO dao) {
@@ -51,7 +60,7 @@ public class UserService {
         final String sessionName = UUID.randomUUID().toString();
         final LocalDate nextDay = LocalDate.now().plusDays(1);
 
-        final User newUser = sessionManager.createNewUser(user, hashedPassword, sessionName, nextDay);
+        final User newUser = createNewUser(user, hashedPassword, sessionName, nextDay);
 
         final int recordsInserted = userDAO.insertOne(newUser);
 
@@ -89,7 +98,7 @@ public class UserService {
 
     public ResultPair<Boolean> hasSessionExpired(final LocalDate ACCESS_DATE, final String SESSION_ID) {
         final ResultPair<Optional<LocalDate>> PAIR = userDAO.getSessionExpDateBySessionId(SESSION_ID);
-        System.out.println("Date is " + PAIR.toString());
+        System.out.println("In session has exipred Date is " + PAIR.toString());
 
         if (!PAIR.getValue().isPresent()) {
             return new ResultPair<>(true, SESSION_NOT_FOUND);
@@ -103,10 +112,15 @@ public class UserService {
     }
 
     private String hashPassword(String password) {
-        return encoder.hashPassword(password);
+        return passwordEncoder.hashPassword(password);
     }
 
     private boolean comparePassword(String rawPassword, String hashedPassword) {
-       return encoder.comparePassword(rawPassword, hashedPassword);
+        return passwordEncoder.comparePassword(rawPassword, hashedPassword);
+    }
+
+    private User createNewUser(User user, String hashedPassword, String sessionName, LocalDate expDate) {
+        final Session NEW_SESSION = Session.createSession(sessionName, expDate);
+        return User.createUserFromUserPasswordSession(user, hashedPassword, NEW_SESSION);
     }
 }

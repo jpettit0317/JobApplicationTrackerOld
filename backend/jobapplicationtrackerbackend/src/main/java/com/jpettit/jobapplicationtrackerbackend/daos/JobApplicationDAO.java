@@ -1,11 +1,16 @@
 package com.jpettit.jobapplicationtrackerbackend.daos;
 
+import com.jpettit.jobapplicationtrackerbackend.database.JobAppTrackerConnection;
+import com.jpettit.jobapplicationtrackerbackend.enums.AppProperties;
 import com.jpettit.jobapplicationtrackerbackend.enums.JobApplicationFields;
 import com.jpettit.jobapplicationtrackerbackend.helpers.JobAppQuerier;
 import com.jpettit.jobapplicationtrackerbackend.helpers.ProjectEnvironment;
+import com.jpettit.jobapplicationtrackerbackend.helpers.ProjectEnvironmentReader;
 import com.jpettit.jobapplicationtrackerbackend.models.JobApplication;
 import com.jpettit.jobapplicationtrackerbackend.models.JobApplicationCard;
 import com.jpettit.jobapplicationtrackerbackend.models.ResultPair;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Repository;
 
 import java.io.InputStream;
 import java.io.Reader;
@@ -15,17 +20,19 @@ import java.sql.*;
 import java.sql.Date;
 import java.util.*;
 
+@Repository
 public class JobApplicationDAO implements DAO<JobApplication>{
-    private final Connection connection;
+    @Value(AppProperties.appEnv)
+    private String env;
+
     private final ProjectEnvironment environment;
 
-    public JobApplicationDAO(Connection connection, ProjectEnvironment environment) {
-        this.connection = connection;
-        this.environment = environment;
+    public JobApplicationDAO() {
+        this.environment = ProjectEnvironmentReader.getEnvironment(env);
     }
 
-    public static JobApplicationDAO createDAO(Connection conn, ProjectEnvironment env) {
-        return new JobApplicationDAO(conn, env);
+    public static JobApplicationDAO createDAO() {
+        return new JobApplicationDAO();
     }
 
     @Override
@@ -58,14 +65,22 @@ public class JobApplicationDAO implements DAO<JobApplication>{
         return 0;
     }
 
-    @Override
-    public void closeConnection() throws SQLException {
-        connection.close();
+    public Connection getConnection() {
+        return JobAppTrackerConnection.createConnection().get();
+    }
+
+    public void closeConnection(Connection conn) {
+        try {
+            conn.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public ResultPair<ArrayList<JobApplicationCard>> getJobAppCards(String username) {
         final JobAppQuerier QUERIER = new JobAppQuerier(environment);
         final ResultPair<String> QUERY = QUERIER.getAllJobAppCards(username);
+        final Connection connection = getConnection();
 
         if (QUERY.getValue().equals("")) {
             return new ResultPair<>(new ArrayList<>(), QUERY.getMessage());

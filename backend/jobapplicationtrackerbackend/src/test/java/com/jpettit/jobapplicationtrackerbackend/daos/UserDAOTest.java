@@ -7,6 +7,7 @@ import com.jpettit.jobapplicationtrackerbackend.models.*;
 import helpers.TestPair;
 import helpers.UserDAOTestHelpers;
 import org.junit.jupiter.api.*;
+import org.springframework.test.context.TestPropertySource;
 
 import static helpers.UserDAOTestHelpers.convertLocalDateToDate;
 import static org.junit.jupiter.api.Assertions.*;
@@ -16,6 +17,9 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Optional;
 
+@TestPropertySource(properties = {
+        "application.env=test"
+})
 class UserDAOTest {
     private static final ProjectEnvironment testEnvironment = ProjectEnvironment.TEST;
     private static Optional<Connection> testConnection;

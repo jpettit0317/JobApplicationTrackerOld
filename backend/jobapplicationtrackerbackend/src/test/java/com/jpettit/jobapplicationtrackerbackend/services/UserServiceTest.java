@@ -1,6 +1,7 @@
 package com.jpettit.jobapplicationtrackerbackend.services;
 
 import com.jpettit.jobapplicationtrackerbackend.daos.UserDAO;
+import com.jpettit.jobapplicationtrackerbackend.helpers.PasswordEncoder;
 import com.jpettit.jobapplicationtrackerbackend.models.*;
 import helpers.UserServiceHelper;
 import org.checkerframework.checker.nullness.Opt;
@@ -32,9 +33,6 @@ class UserServiceTest {
 
     @Mock
     private PasswordEncoder encoder;
-
-    @Mock
-    private SessionManager sessionManager;
 
 //    @BeforeEach
 //    void setUp() {
@@ -78,7 +76,7 @@ class UserServiceTest {
         final String USER_PASSWORD = user.get().getPassword();
 
         Mockito.when(userDAO.getByUsername(user.get().getUsername())).thenReturn(Optional.empty());
-        Mockito.when(userDAO.insertOne(null)).thenReturn(1);
+        Mockito.when(userDAO.insertOne(Mockito.any(User.class))).thenReturn(1);
 
         final UserServiceResultPair<String> ACTUAL = sut.createUser(user.get());
 
@@ -116,7 +114,6 @@ class UserServiceTest {
        final Login LOGIN = UserServiceHelper.login;
 
        Mockito.when(userDAO.getPasswordForUser(LOGIN)).thenReturn(new UserServiceResultPair<>("manWord", ""));
-       Mockito.when(encoder.comparePassword("manWord", LOGIN.getPassword())).thenReturn(false);
 
        final UserServiceResultPair<String> actualPair = sut.validateUserLogin(LOGIN);
        final UserServiceResultPair<String> expectedPair = new UserServiceResultPair<>("", "Username or password doesn't match");
@@ -131,8 +128,8 @@ class UserServiceTest {
 
         Mockito.when(userDAO.getPasswordForUser(LOGIN))
                 .thenReturn(new UserServiceResultPair<>(LOGIN.getPassword(), ""));
-        Mockito.when(encoder.comparePassword(Mockito.eq(LOGIN.getPassword()),
-                Mockito.anyString())).thenReturn(true);
+        Mockito.when(encoder.comparePassword(Mockito.eq(LOGIN.getPassword()), Mockito.anyString()))
+                        .thenReturn(true);
         Mockito.when(userDAO.updateSession(Mockito.eq(LOGIN.getUsername()), Mockito.any(Session.class))).thenReturn(1);
 
         final UserServiceResultPair<String> ACTUAL_PAIR = sut.validateUserLogin(LOGIN);
