@@ -8,9 +8,7 @@ import com.jpettit.jobapplicationtrackerbackend.helpers.ProjectEnvironment;
 import com.jpettit.jobapplicationtrackerbackend.helpers.ProjectEnvironmentReader;
 import com.jpettit.jobapplicationtrackerbackend.helpers.UserQuerier;
 import com.jpettit.jobapplicationtrackerbackend.models.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 import java.sql.*;
@@ -29,6 +27,7 @@ public class UserDAO implements DAO<User> {
 
     public static final String NONEXISTANT_SESSIONID = "Session id doesn't exist";
     public static final String EMPTY_SESSIONID = "Empty sessionId";
+    public static final String USERNAME_NOT_FOUND = "Couldn't find username";
 
     public UserDAO() {
         this.jobAppConnection = JobAppTrackerConnection.createConnection().get();
@@ -125,7 +124,7 @@ public class UserDAO implements DAO<User> {
 
     private ResultPair<String> buildGetUsernameResultPair(String username) {
         if (username.equals("")) {
-            return new ResultPair<>("", NONEXISTANT_SESSIONID);
+            return new ResultPair<>("", USERNAME_NOT_FOUND);
         } else {
             return new ResultPair<>(username, "");
         }

@@ -1,5 +1,7 @@
 package com.jpettit.jobapplicationtrackerbackend.models;
 
+import java.util.Objects;
+
 public class JobApplicationCard {
     private final String jobTitle;
     private final String companyName;
@@ -34,5 +36,18 @@ public class JobApplicationCard {
 
     public String getJobAppId() {
         return jobAppId;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        JobApplicationCard that = (JobApplicationCard) o;
+        return jobTitle.equals(that.jobTitle) && companyName.equals(that.companyName) && interviewCount.equals(that.interviewCount) && jobAppId.equals(that.jobAppId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(jobTitle, companyName, interviewCount, jobAppId);
     }
 }

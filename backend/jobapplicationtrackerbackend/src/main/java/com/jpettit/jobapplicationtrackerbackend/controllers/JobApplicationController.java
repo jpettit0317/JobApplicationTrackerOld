@@ -52,6 +52,16 @@ public class JobApplicationController {
         }
 
         final ResultPair<ArrayList<JobApplicationCard>> JOB_APPS = JOB_APP_SERVICE.getJobAppCardsBySessionId(USERNAME.getValue());
+
+        if (!JOB_APPS.getMessage().equals("")) {
+            final ResultPair<ArrayList<JobApplicationCard>> RESULT = new ResultPair<>(
+                    JOB_APPS.getValue(),
+                    JOB_APPS.getMessage()
+            );
+
+            return new ResponseEntity<>(RESULT, HttpStatus.NOT_FOUND);
+        }
+
         return new ResponseEntity<>(JOB_APPS, HttpStatus.OK);
     }
 

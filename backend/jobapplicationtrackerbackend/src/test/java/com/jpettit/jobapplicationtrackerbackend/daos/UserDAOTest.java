@@ -242,7 +242,7 @@ class UserDAOTest {
 
 
         final String SESSION_ID = "third";
-        ResultPair<String> EXPECTED_PAIR = new ResultPair<>("", sut.NONEXISTANT_SESSIONID);
+        ResultPair<String> EXPECTED_PAIR = new ResultPair<>("", sut.USERNAME_NOT_FOUND);
         ResultPair<String> ACTUAL_PAIR = sut.getUsernameBySessionId(SESSION_ID);
 
         UserDAOTestHelpers.assertResultPairAreEqual(ACTUAL_PAIR, EXPECTED_PAIR);
