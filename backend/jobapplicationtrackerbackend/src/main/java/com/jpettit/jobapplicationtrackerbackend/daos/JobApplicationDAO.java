@@ -63,6 +63,9 @@ public class JobApplicationDAO implements DAO<JobApplication>{
     }
 
     public ResultPair<ArrayList<JobApplicationCard>> getJobAppCards(String username) {
+        if (username.equals("")) {
+            return new ResultPair<>(new ArrayList<>(), EMPTY_USERNAME);
+        }
         final JobAppQuerier QUERIER = new JobAppQuerier(environment);
         final ResultPair<String> QUERY = QUERIER.getAllJobAppCards(username);
         final Connection connection = getConnection();
