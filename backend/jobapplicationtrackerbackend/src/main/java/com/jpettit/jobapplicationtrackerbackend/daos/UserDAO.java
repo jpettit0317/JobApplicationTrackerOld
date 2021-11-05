@@ -8,6 +8,7 @@ import com.jpettit.jobapplicationtrackerbackend.helpers.ProjectEnvironment;
 import com.jpettit.jobapplicationtrackerbackend.helpers.ProjectEnvironmentReader;
 import com.jpettit.jobapplicationtrackerbackend.helpers.UserQuerier;
 import com.jpettit.jobapplicationtrackerbackend.models.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
@@ -19,71 +20,38 @@ import java.util.Optional;
 
 @Repository
 public class UserDAO implements DAO<User> {
+    @Autowired
+    private UserDaoInfoBuilder builder;
+
     @Value(AppProperties.appEnv)
     String env;
-
-    private final Connection jobAppConnection;
-    private final ProjectEnvironment environment;
 
     public static final String NONEXISTANT_SESSIONID = "Session id doesn't exist";
     public static final String EMPTY_SESSIONID = "Empty sessionId";
     public static final String USERNAME_NOT_FOUND = "Couldn't find username";
 
     public UserDAO() {
-        this.jobAppConnection = JobAppTrackerConnection.createConnection().get();
-        this.environment = ProjectEnvironmentReader.getEnvironment(env);
+        final ProjectEnvironment ENV = ProjectEnvironmentReader.getEnvironment(env);
+        this.builder = new UserDaoInfoBuilder(env);
     }
 
-    public Optional<User> getById(Long id) {
+    public Optional<User> getByUsername(final String USERNAME) {
         try {
-            final UserQuerier querier = new UserQuerier(environment);
-            final String query = querier.buildGetUserByIdQuery(id);
-            Statement statement = jobAppConnection.createStatement();
-            ResultSet set = statement.executeQuery(query);
-
-            final Optional<User> user = buildOptionalUser(set);
-
-            return user;
-        } catch(SQLException execption) {
-            System.out.println("Error: " + execption.getMessage());
+            return builder.getByUsername(USERNAME);
+        } catch (SQLException sqlException) {
+            System.out.println("Error: " + sqlException.getMessage());
+            sqlException.printStackTrace();
             return Optional.empty();
         }
     }
 
-    public Optional<User> getByUsername(String userName) {
+    public ResultPair<String> getPasswordForUser(Login login) {
         try {
-            final UserQuerier querier = new UserQuerier(environment);
-            final String query = querier.buildGetUserByUsername(userName);
-            Statement statement = jobAppConnection.createStatement();
-            ResultSet set = statement.executeQuery(query);
-
-            final Optional<User> user = buildOptionalUserNoPassword(set);
-
-            return user;
-        } catch(SQLException execption) {
-            System.out.println("Error: " + execption.getMessage());
-            return Optional.empty();
-        }
-    }
-
-    public UserServiceResultPair<String> getPasswordForUser(Login login) {
-        try {
-            final UserQuerier QUERIER = new UserQuerier(environment);
-            final String QUERY = QUERIER.buildGetPasswordForUserQuery(login.getUsername());
-            Statement statement = jobAppConnection.createStatement();
-            ResultSet set = statement.executeQuery(QUERY);
-
-            final String PASSWORD = buildPassword(set);
-
-            if (PASSWORD.equals("")) {
-                return new UserServiceResultPair<>("", "Password doesn't exist");
-            } else {
-                return new UserServiceResultPair<>(PASSWORD, "");
-            }
+            return builder.getPasswordByUsername(login);
         } catch(SQLException exception) {
             System.out.println(String.format("Error: %s", exception.getMessage()));
             exception.printStackTrace();
-            return new UserServiceResultPair<>("", exception.getMessage());
+            return new ResultPair<>("", exception.getMessage());
         }
     }
 
@@ -92,14 +60,7 @@ public class UserDAO implements DAO<User> {
             return new ResultPair<>("", EMPTY_SESSIONID);
         }
         try {
-            final UserQuerier querier = new UserQuerier(environment);
-            final String query = querier.buildGetUsernameBySessionIdQuery(sessionId);
-            Statement statement = jobAppConnection.createStatement();
-            ResultSet set = statement.executeQuery(query);
-            final String USERNAME = buildUsername(set);
-            final ResultPair<String> RESULT = buildGetUsernameResultPair(USERNAME);
-
-            return RESULT;
+            return builder.getUsernameBySessionId(sessionId);
         } catch (SQLException exception) {
             return new ResultPair<>("", exception.getMessage());
         }
@@ -109,215 +70,30 @@ public class UserDAO implements DAO<User> {
         if (SESSION_ID.equals("")) {
             return new ResultPair<>(Optional.empty(), EMPTY_SESSIONID);
         }
-
-        final UserQuerier QUERIER = new UserQuerier(environment);
-        final String QUERY = QUERIER.getSessionExpirationDateBySessionId(SESSION_ID);
         try {
-            final Statement statement = jobAppConnection.createStatement();
-            ResultSet set = statement.executeQuery(QUERY);
-            return buildGetSessionExpDateBySessionId(set);
+            return builder.getSessionExpDateBySessionId(SESSION_ID);
         } catch (SQLException e) {
             e.printStackTrace();
             return new ResultPair<>(Optional.empty(), e.getMessage());
         }
-    }
-
-    private ResultPair<String> buildGetUsernameResultPair(String username) {
-        if (username.equals("")) {
-            return new ResultPair<>("", USERNAME_NOT_FOUND);
-        } else {
-            return new ResultPair<>(username, "");
-        }
-    }
-
-    private ResultPair<Optional<LocalDate>> buildGetSessionExpDateBySessionId(ResultSet set) {
-        try {
-            if (!set.next()) {
-                return new ResultPair<>(Optional.empty(), NONEXISTANT_SESSIONID);
-            }
-            final Date EXP_DATE = set.getDate(UserFields.expDate);
-            final LocalDate EXP_DATE_LOCAL_DATE = DateConverter.convertDateToLocalDate(EXP_DATE);
-
-            return new ResultPair<>(Optional.of(EXP_DATE_LOCAL_DATE), "");
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return new ResultPair<>(Optional.empty(), e.getMessage());
-        }
-    }
-
-    private String buildUsername(ResultSet set) {
-        try {
-            if (!set.next()) {
-                return "";
-            }
-            final String USERNAME = set.getString(UserFields.userName);
-            return USERNAME;
-        } catch (SQLException sqlException) {
-            System.out.println("Error: " + sqlException.getMessage());
-            sqlException.printStackTrace();
-            return "";
-        }
-    }
-    private String buildPassword(ResultSet set) {
-        try {
-            if (!set.next()) {
-                return "";
-            }
-
-            final String PASSWORD = set.getString(UserFields.password);
-            return PASSWORD;
-        } catch (SQLException sqlException) {
-            System.out.println("Error: " + sqlException.getMessage());
-            sqlException.printStackTrace();
-            return "";
-        }
-    }
-
-    private Optional<User> buildOptionalUser(ResultSet set) {
-        try {
-            if (!set.next()) {
-                return Optional.empty();
-            }
-
-            final Long userId = set.getLong(UserFields.userId);
-            final String userName = set.getString(UserFields.userName);
-            final String email = set.getString(UserFields.email);
-            final String password = set.getString(UserFields.password);
-            final String sessionName = set.getString(UserFields.sessionName);
-            final LocalDate expDate = set.getDate(UserFields.expDate).toLocalDate();
-
-            final Session userSession = Session.createSession(sessionName, expDate);
-
-            return Optional.of(User.createUser(userName, email, password, userSession, userId));
-        } catch (SQLException sqlException) {
-            System.out.println("Error: " + sqlException.getMessage());
-            return Optional.empty();
-        }
-    }
-
-    private Optional<User> buildOptionalUserNoPassword(ResultSet set) {
-        try {
-            if (!set.next()) {
-                return Optional.empty();
-            }
-
-            final Long userId = set.getLong(UserFields.userId);
-            final String userName = set.getString(UserFields.userName);
-            final String email = set.getString(UserFields.email);
-            final String sessionName = set.getString(UserFields.sessionName);
-            final LocalDate expDate = set.getDate(UserFields.expDate).toLocalDate();
-
-            final Session userSession = Session.createSession(sessionName, expDate);
-
-            return Optional.of(User.createUser(userName, email, "", userSession, userId));
-        } catch (SQLException sqlException) {
-            System.out.println("Error: " + sqlException.getMessage());
-            return Optional.empty();
-        }
-    }
-
-    private ArrayList<User> buildUsers() {
-            ArrayList<User> users = new ArrayList<>();
-            try {
-                UserQuerier querier = new UserQuerier(environment);
-                final String query = querier.buildGetAllUsersQuery();
-                Statement statement = jobAppConnection.createStatement();
-                ResultSet set = statement.executeQuery(query);
-
-                while(set.next()) {
-                    final User user = buildUser(set);
-                    users.add(user);
-                }
-                return users;
-            } catch (SQLException sqlException) {
-            System.out.println("Error: " + sqlException.getMessage());
-            return new ArrayList<>();
-        }
-    }
-
-    public User buildUser(ResultSet set) throws SQLException {
-        final Long userId = set.getLong(UserFields.userId);
-        final String userName = set.getString(UserFields.userName);
-        final String email = set.getString(UserFields.email);
-        final String password = set.getString(UserFields.password);
-        final String sessionName = set.getString(UserFields.sessionName);
-        final LocalDate expDate = set.getDate(UserFields.expDate).toLocalDate();
-
-        final Session userSession = Session.createSession(sessionName, expDate);
-
-        return User.createUser(userName, email, password, userSession, userId);
-    }
-
-    private int insertUser(final PreparedStatement statement, final User user) {
-        System.out.println("The user that is being inserted is " + user.toString());
-        try {
-            final Date sessionExpDate = convertLocalDateToDate(user.getSession().getExpirationDate());
-
-            statement.setString(1, user.getUsername());
-            statement.setString(2, user.getEmail());
-            statement.setString(3, user.getPassword());
-            statement.setString(4, user.getSession().getSessionName());
-            statement.setDate(5, sessionExpDate);
-
-            statement.addBatch();
-
-            return statement.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return -1;
-        }
-    }
-
-    private Date convertLocalDateToDate(LocalDate localDate) {
-        return Date.valueOf(localDate);
-    }
-
-    public ArrayList<User> getAll() {
-        return buildUsers();
     }
 
     public int updateSession(String username, Session newSession) {
-        final UserQuerier QUERIER = new UserQuerier(environment);
-        final String QUERY = QUERIER.buildUpdateSession();
-
         try {
-           PreparedStatement statement = jobAppConnection.prepareStatement(QUERY);
-           return updateSession(statement, username, newSession);
-        } catch (SQLException e) {
-            System.out.println(String.format("Error: %s", e.getMessage()));
-            e.printStackTrace();
+            return builder.updateSession(username, newSession);
+        } catch (SQLException exception) {
+            exception.printStackTrace();
             return 0;
         }
     }
 
-    public int updateSession(PreparedStatement statement, String username, Session newSession) {
-        final Date sessionExpDate = convertLocalDateToDate(newSession.getExpirationDate());
-
+    public int insertOne(final User NEW_USER) {
         try {
-            statement.setString(1, newSession.getSessionName());
-            statement.setDate(2, sessionExpDate);
-            statement.setString(3, username);
-
-            statement.addBatch();
-
-            return statement.executeUpdate();
-        } catch (SQLException sqlEx) {
-            System.out.println(String.format("Error: %s", sqlEx.getMessage()));
-            sqlEx.printStackTrace();
-            return 0;
-        }
-    }
-
-    public int insertOne(User t) {
-        final UserQuerier querier = new UserQuerier(environment);
-        final String query = querier.buildInsertOneUserQuery();
-
-        try {
-            PreparedStatement statement = jobAppConnection.prepareStatement(query);
-            return insertUser(statement, t);
+            return builder.insertOne(NEW_USER);
         } catch (SQLException sqlException) {
-            System.out.println("Error " + sqlException.getMessage());
-            return -1;
+            final String ERROR = String.format("Error: %s", sqlException.getMessage());
+            sqlException.printStackTrace();
+            return 0;
         }
     }
 
@@ -329,56 +105,10 @@ public class UserDAO implements DAO<User> {
         return User.createEmptyUser();
     }
 
-    public int insertMany(Collection<User> users) {
-        final UserQuerier querier = new UserQuerier(environment);
-        final String query = querier.buildInsertOneUserQuery();
-        try {
-            final PreparedStatement statement = jobAppConnection.prepareStatement(query);
-            return insertUsers(statement, users);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return -1;
-        }
-    }
-
-    private int insertUsers(final PreparedStatement statement, final Collection<User> users) {
-        try {
-            if (users.isEmpty()) {
-                return 0;
-            }
-            for (User user : users) {
-                final Date sessionExpDate = convertLocalDateToDate(user.getSession().getExpirationDate());
-
-                statement.setString(1, user.getUsername());
-                statement.setString(2, user.getEmail());
-                statement.setString(3, user.getPassword());
-                statement.setString(4, user.getSession().getSessionName());
-                statement.setDate(5, sessionExpDate);
-
-                statement.addBatch();
-            }
-
-            return statement.executeBatch().length;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return -1;
-        }
-    }
-
-    public void closeConnection() throws SQLException {
-        try {
-            jobAppConnection.close();
-        } catch(SQLException sqlException) {
-            System.out.println("Error: " + sqlException.getMessage());
-        }
-    }
-
-
     @Override
     public String toString() {
         return "UserDAO{" +
-                "jobAppConnection=" + jobAppConnection +
-                ", environment=" + environment +
+                ", builder=" + builder +
                 '}';
     }
 }
