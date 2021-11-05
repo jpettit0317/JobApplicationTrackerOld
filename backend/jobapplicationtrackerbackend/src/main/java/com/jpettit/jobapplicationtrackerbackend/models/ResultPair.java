@@ -2,6 +2,8 @@ package com.jpettit.jobapplicationtrackerbackend.models;
 
 import com.jpettit.jobapplicationtrackerbackend.helpers.DaoPair;
 
+import java.util.Objects;
+
 public class ResultPair<T> implements DaoPair<T> {
     private final T VALUE;
     private final String ERROR_MESSAGE;
@@ -30,5 +32,18 @@ public class ResultPair<T> implements DaoPair<T> {
                 "VALUE=" + VALUE +
                 ", ERROR_MESSAGE='" + ERROR_MESSAGE + '\'' +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ResultPair<?> that = (ResultPair<?>) o;
+        return VALUE.equals(that.VALUE) && ERROR_MESSAGE.equals(that.ERROR_MESSAGE);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(VALUE, ERROR_MESSAGE);
     }
 }
