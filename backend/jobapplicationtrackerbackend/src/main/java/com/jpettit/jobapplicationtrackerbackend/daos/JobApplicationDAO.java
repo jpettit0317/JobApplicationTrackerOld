@@ -9,6 +9,7 @@ import com.jpettit.jobapplicationtrackerbackend.helpers.ProjectEnvironmentReader
 import com.jpettit.jobapplicationtrackerbackend.models.JobApplication;
 import com.jpettit.jobapplicationtrackerbackend.models.JobApplicationCard;
 import com.jpettit.jobapplicationtrackerbackend.models.ResultPair;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
@@ -22,17 +23,16 @@ import java.util.*;
 
 @Repository
 public class JobApplicationDAO implements DAO<JobApplication>{
-    @Value(AppProperties.appEnv)
-    private String env;
+    @Autowired
+    JobApplicationDaoInfoBuilder builder;
 
     private final ProjectEnvironment environment;
 
-    public JobApplicationDAO() {
-        this.environment = ProjectEnvironmentReader.getEnvironment(env);
-    }
+    public static final String EMPTY_USERNAME = "Username is empty.";
 
-    public static JobApplicationDAO createDAO() {
-        return new JobApplicationDAO();
+    public JobApplicationDAO(@Value(AppProperties.appEnv) String env) {
+        this.environment = ProjectEnvironmentReader.getEnvironment(env);
+        this.builder = new JobApplicationDaoInfoBuilder(env);
     }
 
     @Override
