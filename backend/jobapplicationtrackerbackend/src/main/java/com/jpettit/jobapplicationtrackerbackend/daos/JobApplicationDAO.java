@@ -36,16 +36,6 @@ public class JobApplicationDAO implements DAO<JobApplication>{
     }
 
     @Override
-    public Optional<JobApplication> getById(Long id) {
-        return Optional.empty();
-    }
-
-    @Override
-    public ArrayList<JobApplication> getAll() {
-        return null;
-    }
-
-    @Override
     public int insertOne(JobApplication jobApplication) {
         return 0;
     }
@@ -58,11 +48,6 @@ public class JobApplicationDAO implements DAO<JobApplication>{
     @Override
     public JobApplication delete(JobApplication jobApplication) {
         return null;
-    }
-
-    @Override
-    public int insertMany(Collection<JobApplication> list) {
-        return 0;
     }
 
     public Connection getConnection() {
