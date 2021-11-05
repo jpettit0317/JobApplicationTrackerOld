@@ -37,8 +37,9 @@ public class UserController {
     @Autowired
     UserService userService;
 
+    @PostMapping(UserControllerURL.addUser)
     public ResponseEntity<String> addUser(@RequestBody User newUser) {
-        final UserServiceResultPair<String> PAIR = userService.createUser(newUser);
+        final ResultPair<String> PAIR = userService.createUser(newUser);
 
         if(!PAIR.getMessage().equals("")) {
             return new ResponseEntity<>(PAIR.getMessage(), HttpStatus.NOT_FOUND);
@@ -49,7 +50,7 @@ public class UserController {
 
     @PostMapping(UserControllerURL.loginUser)
     public ResponseEntity<String> loginUser(@RequestBody Login login) {
-        final UserServiceResultPair<String> result = userService.validateUserLogin(login);
+        final ResultPair<String> result = userService.validateUserLogin(login);
 
         if (result.getMessage().equals("")) {
             return new ResponseEntity<>(result.getValue(), HttpStatus.OK);
