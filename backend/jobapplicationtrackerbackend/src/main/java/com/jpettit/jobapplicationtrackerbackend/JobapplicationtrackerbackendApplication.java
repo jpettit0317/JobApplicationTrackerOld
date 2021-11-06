@@ -11,10 +11,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 
 @SpringBootApplication
 public class JobapplicationtrackerbackendApplication {
-	public static ProjectEnvironment environment;
-
 	public static void main(String[] args) {
-		// environment = ProjectEnvironmentReader.getEnvironment(args[0]);
 		SpringApplication.run(JobapplicationtrackerbackendApplication.class, args);
 	}
 
