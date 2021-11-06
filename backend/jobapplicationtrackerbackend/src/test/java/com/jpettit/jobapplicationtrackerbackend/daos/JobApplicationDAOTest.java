@@ -33,6 +33,9 @@ class JobApplicationDAOTest {
     private JobApplicationDaoInfoBuilder builder;
 
     final String EXCEPTION_THROWN_MSG = "Exception was thrown.";
+    final String CREATE_CONN_ERR_MSG = "Couldn't create session.";
+
+    // getJobAppCards tests
 
     @Test
     public void testGetJobAppCards_whenPassedInEmptyUsername_shouldReturnEmptyArrayListAndUsernameIsEmpty() {
@@ -60,6 +63,23 @@ class JobApplicationDAOTest {
         HELPER.verifyResultPairOfJobAppCardsAreEqual();
         assertCallCountForGetJobAppCards(USERNAME, 1);
     }
+
+    @Test
+    public void testGetJobAppCards_whenConnectionCantBeMade_ShouldReturnNoCardsAndCouldntCreateSessionErrorMessage() throws SQLException {
+        final String USERNAME = JobApplicationDAOTestHelperVars.USER1_NAME;
+        final ResultPair<ArrayList<JobApplicationCard>> EXPECTED = new ResultPair<>(new ArrayList<>(), CREATE_CONN_ERR_MSG);
+
+        Mockito.when(builder.getJobAppCards(USERNAME))
+                .thenReturn(EXPECTED);
+
+        final ResultPair<ArrayList<JobApplicationCard>> ACTUAL = sut.getJobAppCards(USERNAME);
+
+        final JobApplicationDAOTestHelper<ResultPair<ArrayList<JobApplicationCard>>> HELPER = new JobApplicationDAOTestHelper<>(ACTUAL, EXPECTED);
+
+        HELPER.verifyResultPairOfJobAppCardsAreEqual();
+        assertCallCountForGetJobAppCards(USERNAME, 1);
+    }
+    // end of getJobAppCards tests
 
     private void assertCallCountForGetJobAppCards(final String USERNAME, final int EXPECTED_COUNT) throws SQLException {
         Mockito.verify(builder, Mockito.times(EXPECTED_COUNT)).getJobAppCards(USERNAME);
