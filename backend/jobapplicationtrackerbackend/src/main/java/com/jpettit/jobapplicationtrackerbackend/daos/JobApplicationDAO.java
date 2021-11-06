@@ -62,43 +62,20 @@ public class JobApplicationDAO implements DAO<JobApplication>{
         }
     }
 
-    public ResultPair<ArrayList<JobApplicationCard>> getJobAppCards(String username) {
-        if (username.equals("")) {
+    public ResultPair<ArrayList<JobApplicationCard>> getJobAppCards(final String USERNAME) {
+        if (USERNAME.equals("")) {
             return new ResultPair<>(new ArrayList<>(), EMPTY_USERNAME);
         }
-        final JobAppQuerier QUERIER = new JobAppQuerier(environment);
-        final ResultPair<String> QUERY = QUERIER.getAllJobAppCards(username);
-        final Connection connection = getConnection();
-
-        if (QUERY.getValue().equals("")) {
-            return new ResultPair<>(new ArrayList<>(), QUERY.getMessage());
-        }
         try {
-            Statement statement = connection.createStatement();
-            ResultSet set = statement.executeQuery(QUERY.getValue());
-            final ArrayList<JobApplicationCard> CARDS = buildJobAppCardsForUsername(set);
-            return new ResultPair<>(CARDS, "");
+            final ResultPair<ArrayList<JobApplicationCard>> RESULT = builder.getJobAppCards(USERNAME);
+            return RESULT;
         } catch (SQLException ex) {
-            return new ResultPair<>(new ArrayList<>(), ex.getMessage());
+            ex.printStackTrace();
+            return createErrorCards(ex.getMessage());
         }
     }
 
-    private ArrayList<JobApplicationCard> buildJobAppCardsForUsername(ResultSet set) {
-        ArrayList<JobApplicationCard> cards = new ArrayList<>();
-        try {
-            while (set.next()) {
-                final String JOB_TITLE = set.getString(JobApplicationFields.jobTitle);
-                final String NAME = set.getString(JobApplicationFields.company);
-                final int COUNT = set.getInt(JobApplicationFields.interviewCount);
-                final String ID = set.getString(JobApplicationFields.jobappId);
-
-                final JobApplicationCard CARD = JobApplicationCard.createCard(JOB_TITLE,
-                        NAME, COUNT, ID);
-                cards.add(CARD);
-            }
-            return cards;
-        } catch (SQLException ex) {
-            return new ArrayList<>();
-        }
+    private ResultPair<ArrayList<JobApplicationCard>> createErrorCards(final String ERR) {
+        return new ResultPair<>(new ArrayList<>(), ERR);
     }
 }
