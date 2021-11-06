@@ -32,9 +32,10 @@ class JobApplicationDAOTest {
     @Mock
     private JobApplicationDaoInfoBuilder builder;
 
-    final String EXCEPTION_THROWN_MSG = "Exception was thrown.";
-    final String CREATE_CONN_ERR_MSG = "Couldn't create session.";
-
+    private final String EXCEPTION_THROWN_MSG = "Exception was thrown.";
+    private final String CREATE_CONN_ERR_MSG = "Couldn't create session.";
+    private final String INVALID_USERNAME = "Username is empty";
+    private final String INVALIDTABLENAME = "Table name is empty";
     // getJobAppCards tests
 
     @Test
