@@ -112,6 +112,24 @@ class JobApplicationDAOTest {
         HELPER.verifyResultPairOfJobAppCardsAreEqual();
         assertCallCountForGetJobAppCards(USERNAME, 1);
     }
+
+    @Test
+    public void testGetJobAppCards_whenSQLExceptionIsThrown_ShouldReturnNoCardsAndCouldntCreateSessionErrorMessage() throws SQLException {
+        final String USERNAME = JobApplicationDAOTestHelperVars.USER1_NAME;
+        final ResultPair<ArrayList<JobApplicationCard>> EXPECTED = new ResultPair<>(new ArrayList<>(), EXCEPTION_THROWN_MSG);
+        final SQLException EXCEPTION = new SQLException(EXCEPTION_THROWN_MSG);
+
+        Mockito.when(builder.getJobAppCards(USERNAME))
+                .thenThrow(EXCEPTION);
+
+        final ResultPair<ArrayList<JobApplicationCard>> ACTUAL = sut.getJobAppCards(USERNAME);
+
+        final JobApplicationDAOTestHelper<ResultPair<ArrayList<JobApplicationCard>>> HELPER = new JobApplicationDAOTestHelper<>(ACTUAL, EXPECTED);
+
+        HELPER.verifyResultPairOfJobAppCardsAreEqual();
+        assertCallCountForGetJobAppCards(USERNAME, 1);
+    }
+
     // end of getJobAppCards tests
 
     private void assertCallCountForGetJobAppCards(final String USERNAME, final int EXPECTED_COUNT) throws SQLException {
