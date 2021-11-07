@@ -114,7 +114,7 @@ public class UserDaoInfoBuilder {
     }
 
     public int updateSession(final String USERNAME, final Session NEW_SESSION) throws SQLException {
-        if (USERNAME.equals("") || Optional.ofNullable(NEW_SESSION).isPresent()) {
+        if (USERNAME.equals("") || !Optional.ofNullable(NEW_SESSION).isPresent()) {
             return 0;
         }
         final UserQuerier QUERIER = new UserQuerier(environment);
