@@ -28,7 +28,7 @@ public class JobApplicationDAO implements DAO<JobApplication>{
 
     private final ProjectEnvironment environment;
 
-    public static final String EMPTY_USERNAME = "Username is empty.";
+    public static final String INVALID_USERNAME = "Username can't be found.";
 
     public JobApplicationDAO(@Value(AppProperties.appEnv) String env) {
         this.environment = ProjectEnvironmentReader.getEnvironment(env);
@@ -64,7 +64,7 @@ public class JobApplicationDAO implements DAO<JobApplication>{
 
     public ResultPair<ArrayList<JobApplicationCard>> getJobAppCards(final String USERNAME) {
         if (USERNAME.equals("")) {
-            return new ResultPair<>(new ArrayList<>(), EMPTY_USERNAME);
+            return new ResultPair<>(new ArrayList<>(), INVALID_USERNAME);
         }
         try {
             final ResultPair<ArrayList<JobApplicationCard>> RESULT = builder.getJobAppCards(USERNAME);

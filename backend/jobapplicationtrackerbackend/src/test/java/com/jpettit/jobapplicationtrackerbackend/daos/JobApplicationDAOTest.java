@@ -40,7 +40,7 @@ class JobApplicationDAOTest {
 
     @Test
     public void testGetJobAppCards_whenPassedInEmptyUsername_shouldReturnEmptyArrayListAndUsernameIsEmpty() {
-        final ResultPair<ArrayList<JobApplicationCard>> EXPECTED_PAIR = new ResultPair<>(new ArrayList<>(), sut.EMPTY_USERNAME);
+        final ResultPair<ArrayList<JobApplicationCard>> EXPECTED_PAIR = new ResultPair<>(new ArrayList<>(), sut.INVALID_USERNAME);
         final ResultPair<ArrayList<JobApplicationCard>> ACTUAL_PAIR = sut.getJobAppCards("");
 
         final JobApplicationDAOTestHelper<ResultPair<ArrayList<JobApplicationCard>>> HELPER = new JobApplicationDAOTestHelper<>(ACTUAL_PAIR, EXPECTED_PAIR);

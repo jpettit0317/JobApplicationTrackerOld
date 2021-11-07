@@ -123,4 +123,8 @@ public class JobApplicationControllerTestHelper {
                 jobTitle, companyName, interviewCount, jobAppId
         );
     }
+
+    public static ArrayList<Integer> initCalledTimesRepeating(final int SIZE, final int VALUE) {
+        return new ArrayList<Integer>(Collections.nCopies(SIZE, VALUE));
+    }
 }
