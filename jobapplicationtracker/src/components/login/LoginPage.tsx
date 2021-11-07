@@ -34,12 +34,9 @@ const LoginPage: React.FC<LoginPageProps> = props => {
     const setErrors = (errors: LoginPageErrorPair) => {
         setUserNameError(errors.usernameError);
         setPasswordError(errors.passwordError);
-        console.log(`Username error: ${userNameError}`);
-        console.log(`Password error: ${passwordError}`);
     }
 
     const setRedirect = (redirect: {destination: string, shouldRedirect: boolean}) => {
-        console.log(`ShouldRedirect = ${redirect.shouldRedirect} Destination = ${redirect.destination}`);
         setShouldRedirect(redirect.shouldRedirect);
         setRedirectDestination(redirect.destination);
     }
