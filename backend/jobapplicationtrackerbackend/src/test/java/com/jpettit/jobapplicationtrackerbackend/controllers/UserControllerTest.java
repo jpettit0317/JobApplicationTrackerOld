@@ -23,5 +23,16 @@ import static org.junit.jupiter.api.Assertions.*;
         "application.encryption.rounds=12"
 })
 class UserControllerTest {
+    private MockMvc mockMvc;
+
+    @Value(AppProperties.appEnv)
+    String environment;
+
+    @Mock
+    private UserController sut;
+
+    @InjectMocks
+    private UserService userService;
+
 
 }
