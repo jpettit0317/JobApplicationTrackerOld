@@ -1,6 +1,8 @@
 package com.jpettit.jobapplicationtrackerbackend.controllers;
 
+import com.jpettit.jobapplicationtrackerbackend.daos.UserDAO;
 import com.jpettit.jobapplicationtrackerbackend.enums.AppProperties;
+import com.jpettit.jobapplicationtrackerbackend.helpers.PasswordEncoder;
 import com.jpettit.jobapplicationtrackerbackend.helpers.UserControllerURL;
 import com.jpettit.jobapplicationtrackerbackend.models.ResultPair;
 import com.jpettit.jobapplicationtrackerbackend.models.Session;
@@ -50,6 +52,13 @@ class UserControllerTest {
     @Mock
     private UserService userService;
 
+    @Mock
+    private UserDAO userDAO;
+
+    @Mock
+    private PasswordEncoder encoder;
+
+    private
     @BeforeEach
     void setUpBeforeEach() {
         mockMvc = MockMvcBuilders.standaloneSetup(sut).build();
