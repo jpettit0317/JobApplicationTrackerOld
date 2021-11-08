@@ -49,13 +49,13 @@ public class UserController {
     }
 
     @PostMapping(UserControllerURL.loginUser)
-    public ResponseEntity<String> loginUser(@RequestBody Login login) {
+    public ResponseEntity<ResultPair<String>> loginUser(@RequestBody Login login) {
         final ResultPair<String> result = userService.validateUserLogin(login);
 
         if (result.getMessage().equals("")) {
-            return new ResponseEntity<>(result.getValue(), HttpStatus.OK);
+            return new ResponseEntity<>(result, HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(result.getMessage(), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(result, HttpStatus.NOT_FOUND);
         }
     }
 }
