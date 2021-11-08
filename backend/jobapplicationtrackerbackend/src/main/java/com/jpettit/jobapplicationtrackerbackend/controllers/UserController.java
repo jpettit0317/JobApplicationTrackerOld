@@ -38,13 +38,13 @@ public class UserController {
     UserService userService;
 
     @PostMapping(UserControllerURL.addUser)
-    public ResponseEntity<String> addUser(@RequestBody User newUser) {
+    public ResponseEntity<ResultPair<String>> addUser(@RequestBody User newUser) {
         final ResultPair<String> PAIR = userService.createUser(newUser);
 
         if(!PAIR.getMessage().equals("")) {
-            return new ResponseEntity<>(PAIR.getMessage(), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(PAIR, HttpStatus.NOT_FOUND);
         } else {
-            return new ResponseEntity<>(PAIR.getValue(), HttpStatus.CREATED);
+            return new ResponseEntity<>(PAIR, HttpStatus.CREATED);
         }
     }
 

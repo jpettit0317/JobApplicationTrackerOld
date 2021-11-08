@@ -1,9 +1,8 @@
-package helpers;
+package testhelpers;
 
 import com.jpettit.jobapplicationtrackerbackend.helpers.JobAppQuerier;
 import com.jpettit.jobapplicationtrackerbackend.helpers.ProjectEnvironment;
 import com.jpettit.jobapplicationtrackerbackend.models.ResultPair;
-import javafx.util.Pair;
 import org.junit.jupiter.api.Assertions;
 
 import java.util.HashMap;

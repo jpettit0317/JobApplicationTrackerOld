@@ -1,16 +1,11 @@
-package helpers;
+package testhelpers;
 
-import com.jpettit.jobapplicationtrackerbackend.daos.UserDAO;
-import com.jpettit.jobapplicationtrackerbackend.daos.UserDaoInfoBuilder;
 import com.jpettit.jobapplicationtrackerbackend.database.JobAppTrackerConnection;
-import com.jpettit.jobapplicationtrackerbackend.enums.UserFields;
 import com.jpettit.jobapplicationtrackerbackend.helpers.ProjectEnvironment;
-import com.jpettit.jobapplicationtrackerbackend.helpers.UserQuerier;
 import com.jpettit.jobapplicationtrackerbackend.models.Login;
 import com.jpettit.jobapplicationtrackerbackend.models.ResultPair;
 import com.jpettit.jobapplicationtrackerbackend.models.Session;
 import com.jpettit.jobapplicationtrackerbackend.models.User;
-import org.checkerframework.checker.units.qual.A;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 

@@ -1,6 +1,6 @@
 package com.jpettit.jobapplicationtrackerbackend.models;
 
-import helpers.UserServiceUserPairHelper;
+import testhelpers.UserServiceUserPairHelper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 

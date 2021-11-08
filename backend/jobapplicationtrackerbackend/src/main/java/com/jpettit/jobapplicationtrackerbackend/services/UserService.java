@@ -1,22 +1,14 @@
 package com.jpettit.jobapplicationtrackerbackend.services;
 
 import com.jpettit.jobapplicationtrackerbackend.daos.UserDAO;
-import com.jpettit.jobapplicationtrackerbackend.database.JobAppTrackerConnection;
-import com.jpettit.jobapplicationtrackerbackend.enums.AppProperties;
 import com.jpettit.jobapplicationtrackerbackend.helpers.PasswordEncoder;
-import com.jpettit.jobapplicationtrackerbackend.helpers.ProjectEnvironment;
-import com.jpettit.jobapplicationtrackerbackend.helpers.ProjectEnvironmentReader;
 import com.jpettit.jobapplicationtrackerbackend.models.*;
 
-import java.sql.Connection;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -27,7 +19,9 @@ public class UserService {
     @Autowired
     PasswordEncoder passwordEncoder;
 
-    public final String SESSION_NOT_FOUND = "Can't find session with that id.";
+    public static final String SESSION_NOT_FOUND = "Can't find session with that id.";
+    public static final String USERNAME_EXISTS = "User exists";
+    public static final String USER_NOT_CREATED = "Couldn't create user";
 
     public UserService(UserDAO newUserDAO, PasswordEncoder encoder) {
         this.userDAO = newUserDAO;
@@ -42,7 +36,7 @@ public class UserService {
         final Optional<User> duplicateUser = userDAO.getByUsername(user.getUsername());
 
         if (duplicateUser.isPresent()) {
-            return new ResultPair<>("", "User exists");
+            return new ResultPair<>("", USERNAME_EXISTS);
         }
 
         final String hashedPassword = hashPassword(user.getPassword());
@@ -56,7 +50,7 @@ public class UserService {
         if (recordsInserted == 1) {
             return new ResultPair<>(sessionName, "");
         } else {
-            return new ResultPair<>("", "Couldn't create user");
+            return new ResultPair<>("", USER_NOT_CREATED);
         }
     }
 

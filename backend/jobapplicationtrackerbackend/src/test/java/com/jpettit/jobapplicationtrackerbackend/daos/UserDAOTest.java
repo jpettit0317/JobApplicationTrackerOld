@@ -1,12 +1,10 @@
 package com.jpettit.jobapplicationtrackerbackend.daos;
 
-import com.jpettit.jobapplicationtrackerbackend.database.JobAppTrackerConnection;
 import com.jpettit.jobapplicationtrackerbackend.enums.AppProperties;
 import com.jpettit.jobapplicationtrackerbackend.helpers.ProjectEnvironment;
 import com.jpettit.jobapplicationtrackerbackend.models.*;
 
-import helpers.TestPair;
-import helpers.UserDAOTestHelpers;
+import testhelpers.UserDAOTestHelpers;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -15,9 +13,6 @@ import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 import org.mockito.*;
-import static helpers.UserDAOTestHelpers.convertLocalDateToDate;
-import static helpers.UserDAOTestHelpers.createDefaultTestUsers;
-import static org.junit.jupiter.api.Assertions.*;
 
 import java.sql.*;
 import java.time.LocalDate;

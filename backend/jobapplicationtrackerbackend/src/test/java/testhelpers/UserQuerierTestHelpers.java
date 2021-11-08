@@ -1,4 +1,4 @@
-package helpers;
+package testhelpers;
 
 import com.jpettit.jobapplicationtrackerbackend.helpers.ProjectEnvironment;
 import com.jpettit.jobapplicationtrackerbackend.helpers.UserQuerier;

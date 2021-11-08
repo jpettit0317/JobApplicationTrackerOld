@@ -3,8 +3,7 @@ package com.jpettit.jobapplicationtrackerbackend.services;
 import com.jpettit.jobapplicationtrackerbackend.daos.UserDAO;
 import com.jpettit.jobapplicationtrackerbackend.helpers.PasswordEncoder;
 import com.jpettit.jobapplicationtrackerbackend.models.*;
-import helpers.UserServiceHelper;
-import org.checkerframework.checker.nullness.Opt;
+import testhelpers.UserServiceHelper;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -14,10 +13,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import helpers.UserServiceUserPairHelper;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.time.LocalDate;
 import java.util.Optional;

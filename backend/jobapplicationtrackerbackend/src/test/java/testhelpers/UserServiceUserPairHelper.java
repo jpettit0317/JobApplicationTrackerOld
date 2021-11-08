@@ -1,4 +1,4 @@
-package helpers;
+package testhelpers;
 
 import com.jpettit.jobapplicationtrackerbackend.models.Session;
 import com.jpettit.jobapplicationtrackerbackend.models.User;

@@ -1,14 +1,12 @@
 package com.jpettit.jobapplicationtrackerbackend.helpers;
 
-import helpers.UserQuerierTestHelpers;
+import testhelpers.UserQuerierTestHelpers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Collections;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class UserQuerierTest {
     private UserQuerier sut;

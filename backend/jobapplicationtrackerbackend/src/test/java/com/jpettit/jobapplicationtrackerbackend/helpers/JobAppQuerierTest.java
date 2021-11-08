@@ -1,14 +1,11 @@
 package com.jpettit.jobapplicationtrackerbackend.helpers;
 
 import com.jpettit.jobapplicationtrackerbackend.models.ResultPair;
-import helpers.JobAppQuerierTestHelpers;
+import testhelpers.JobAppQuerierTestHelpers;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static helpers.JobAppQuerierTestHelpers.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static testhelpers.JobAppQuerierTestHelpers.*;
 
 class JobAppQuerierTest {
     private JobAppQuerier sut;

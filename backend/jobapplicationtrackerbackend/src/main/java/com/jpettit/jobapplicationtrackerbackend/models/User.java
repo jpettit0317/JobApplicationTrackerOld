@@ -1,14 +1,40 @@
 package com.jpettit.jobapplicationtrackerbackend.models;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.jpettit.jobapplicationtrackerbackend.helpers.DateConverter;
+
+import java.sql.Date;
 import java.time.LocalDate;
 import java.util.Objects;
 
 public class User {
-    private final String username;
-    private final String email;
+    private String username;
+    private String email;
     private String password;
     private Session session;
     private long userId;
+
+    public User() {
+
+    }
+
+    @JsonCreator
+    public User(@JsonProperty("username") String username, @JsonProperty("email") String email,
+                @JsonProperty("password") String password, @JsonProperty("userId") Long id,
+                @JsonProperty("sessionName") String sessionId, @JsonProperty("expDate") String expDate) {
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.userId = id;
+        final LocalDate DATE = convertDateToLocalDate(Date.valueOf(expDate));
+
+        this.session = Session.createSession(sessionId, DATE);
+    }
+
+    private LocalDate convertDateToLocalDate(final Date DATE) {
+        return DateConverter.convertDateToLocalDate(DATE);
+    }
 
     private User(String username, String email, String password, Session session, long userId) {
         this.username = username;

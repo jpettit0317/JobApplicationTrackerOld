@@ -1,13 +1,10 @@
-package helpers;
+package testhelpers;
 
 import com.jpettit.jobapplicationtrackerbackend.models.*;
-import javafx.util.Pair;
 import org.junit.jupiter.api.Assertions;
 
 import java.time.LocalDate;
 import java.time.format.TextStyle;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Locale;
 import java.util.Optional;
 

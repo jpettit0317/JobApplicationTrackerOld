@@ -1,10 +1,6 @@
-package helpers;
+package testhelpers;
 
-import com.jpettit.jobapplicationtrackerbackend.models.JobApplicationCard;
-import com.jpettit.jobapplicationtrackerbackend.models.ResultPair;
 import org.junit.jupiter.api.Assertions;
-
-import java.util.ArrayList;
 
 public class JobApplicationDAOTestHelper<Object> {
     private final Object ACTUAL;
