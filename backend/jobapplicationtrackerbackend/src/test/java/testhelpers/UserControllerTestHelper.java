@@ -1,9 +1,8 @@
 package testhelpers;
 
 import com.jpettit.jobapplicationtrackerbackend.helpers.UserControllerURL;
-import com.jpettit.jobapplicationtrackerbackend.models.ResultPair;
+import com.jpettit.jobapplicationtrackerbackend.models.Login;
 import com.jpettit.jobapplicationtrackerbackend.models.User;
-import org.json.JSONException;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -45,7 +44,46 @@ public class UserControllerTestHelper<Object> {
         return String.format("Expected %s, got %s instead.", EXP_STR, ACTUAL_STR);
     }
 
-    public void buildResult(final MockMvc MVC, final User USER, final HttpStatus STATUS) throws Exception {
+    public void buildResultForLoginUser(final MockMvc MVC, final Login LOGIN, final HttpStatus STATUS) throws Exception {
+        if (STATUS == HttpStatus.OK) {
+            this.mvcResult = buildLoginUserSuccess(MVC, LOGIN);
+        } else if (STATUS == HttpStatus.NOT_FOUND) {
+            this.mvcResult = buildLoginUserError(MVC, LOGIN);
+        } else {
+            final String ERROR = String.format("Error: %d not supported", STATUS.value());
+            throw new Exception(ERROR);
+        }
+    }
+
+    private MvcResult buildLoginUserSuccess(final MockMvc MVC, final Login LOGIN) throws Exception {
+        final String LOGIN_JSON = JSONHelper.convertJSONLoginToString(LOGIN);
+        final String CHAR_ENCODING = "UTF-8";
+
+        return MVC.perform(MockMvcRequestBuilders.post(UserControllerURL.loginUser)
+                        .content(LOGIN_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .characterEncoding(CHAR_ENCODING)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+    }
+
+    private MvcResult buildLoginUserError(final MockMvc MVC, final Login LOGIN) throws Exception {
+        final String LOGIN_JSON = JSONHelper.convertJSONLoginToString(LOGIN);
+        final String CHAR_ENCODING = "UTF-8";
+
+        return MVC.perform(MockMvcRequestBuilders.post(UserControllerURL.loginUser)
+                        .content(LOGIN_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .characterEncoding(CHAR_ENCODING)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isNotFound())
+                .andReturn();
+    }
+
+    public void buildResultForCreateUser(final MockMvc MVC, final User USER, final HttpStatus STATUS) throws Exception {
         if (STATUS == HttpStatus.CREATED) {
             mvcResult = buildCreateUserSuccess(MVC, USER);
         } else if (STATUS == HttpStatus.NOT_FOUND) {
@@ -61,7 +99,7 @@ public class UserControllerTestHelper<Object> {
     }
 
     private MvcResult buildCreateUserSuccess(final MockMvc MVC, final User USER) throws Exception {
-        final String USER_JSON = JSONHelper.convertJSONObjectToString(USER);
+        final String USER_JSON = JSONHelper.convertJSONUserToString(USER);
         final String CHAR_ENCODING = "UTF-8";
 
         return MVC.perform(MockMvcRequestBuilders.post(UserControllerURL.addUser)
@@ -75,7 +113,7 @@ public class UserControllerTestHelper<Object> {
     }
 
     private MvcResult buildCreateUserError(final MockMvc MVC, final User USER) throws Exception {
-        final String USER_JSON = JSONHelper.convertJSONObjectToString(USER);
+        final String USER_JSON = JSONHelper.convertJSONUserToString(USER);
         final String CHAR_ENCODING = "UTF-8";
 
         return MVC.perform(MockMvcRequestBuilders.post(UserControllerURL.addUser)

@@ -8,6 +8,7 @@ import com.jpettit.jobapplicationtrackerbackend.models.ResultPair;
 import com.jpettit.jobapplicationtrackerbackend.models.Session;
 import com.jpettit.jobapplicationtrackerbackend.models.User;
 import com.jpettit.jobapplicationtrackerbackend.services.UserService;
+import testhelpers.JSONHelper;
 import testhelpers.UserControllerTestHelper;
 import testhelpers.UserControllerTestHelperVars;
 import org.junit.jupiter.api.AfterEach;
@@ -70,7 +71,7 @@ class UserControllerTest {
             final UserControllerTestHelper<ResultPair<String>> CONTENTS = new UserControllerTestHelper<>();
             CONTENTS.buildResultForCreateUser(mockMvc, USER, CREATED);
             final String RESPONSE = CONTENTS.getResponse();
-            final ResultPair<String> ACTUAL = UserControllerTestHelperVars.convertJSONResponseToStringResultPair(RESPONSE);
+            final ResultPair<String> ACTUAL = JSONHelper.convertJSONResponseToStringResultPair(RESPONSE);
             CONTENTS.setActualAndExpected(PAIR, ACTUAL);
             CONTENTS.verifyEqual();
         } catch (Exception ex) {
@@ -90,7 +91,7 @@ class UserControllerTest {
             final UserControllerTestHelper<ResultPair<String>> CONTENTS = new UserControllerTestHelper<>();
             CONTENTS.buildResultForCreateUser(mockMvc, USER, NOT_FOUND);
             final String RESPONSE = CONTENTS.getResponse();
-            final ResultPair<String> ACTUAL = UserControllerTestHelperVars.convertJSONResponseToStringResultPair(RESPONSE);
+            final ResultPair<String> ACTUAL = JSONHelper.convertJSONResponseToStringResultPair(RESPONSE);
             CONTENTS.setActualAndExpected(PAIR, ACTUAL);
             CONTENTS.verifyEqual();
         } catch (Exception ex) {
@@ -110,7 +111,7 @@ class UserControllerTest {
             final UserControllerTestHelper<ResultPair<String>> CONTENTS = new UserControllerTestHelper<>();
             CONTENTS.buildResultForCreateUser(mockMvc, USER, NOT_FOUND);
             final String RESPONSE = CONTENTS.getResponse();
-            final ResultPair<String> ACTUAL = UserControllerTestHelperVars.convertJSONResponseToStringResultPair(RESPONSE);
+            final ResultPair<String> ACTUAL = JSONHelper.convertJSONResponseToStringResultPair(RESPONSE);
             CONTENTS.setActualAndExpected(PAIR, ACTUAL);
             CONTENTS.verifyEqual();
         } catch (Exception ex) {
@@ -133,7 +134,7 @@ class UserControllerTest {
             final UserControllerTestHelper<ResultPair<String>> CONTENTS = new UserControllerTestHelper<>();
             CONTENTS.buildResultForLoginUser(mockMvc, LOGIN, SUCCESS);
             final String RESPONSE = CONTENTS.getResponse();
-            final ResultPair<String> ACTUAL = UserControllerTestHelperVars.convertJSONResponseToStringResultPair(RESPONSE);
+            final ResultPair<String> ACTUAL = JSONHelper.convertJSONResponseToStringResultPair(RESPONSE);
             CONTENTS.setActualAndExpected(PAIR, ACTUAL);
             CONTENTS.verifyEqual();
         } catch (Exception ex) {
@@ -154,7 +155,7 @@ class UserControllerTest {
             final UserControllerTestHelper<ResultPair<String>> CONTENTS = new UserControllerTestHelper<>();
             CONTENTS.buildResultForLoginUser(mockMvc, LOGIN, NOT_FOUND);
             final String RESPONSE = CONTENTS.getResponse();
-            final ResultPair<String> ACTUAL = UserControllerTestHelperVars.convertJSONResponseToStringResultPair(RESPONSE);
+            final ResultPair<String> ACTUAL = JSONHelper.convertJSONResponseToStringResultPair(RESPONSE);
             CONTENTS.setActualAndExpected(PAIR, ACTUAL);
             CONTENTS.verifyEqual();
         } catch (Exception ex) {

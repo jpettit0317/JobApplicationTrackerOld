@@ -15,12 +15,4 @@ public class UserControllerTestHelperVars {
 
         return User.createUser("user1", "user1@email.com", "password", SESSION, 1L);
     }
-
-    public static ResultPair<String> convertJSONResponseToStringResultPair(final String JSON_RESPONSE) throws JSONException {
-        final JSONObject obj = new JSONObject(JSON_RESPONSE);
-        final String VALUE = obj.getString("value");
-        final String ERROR_MSG = obj.getString("message");
-
-        return new ResultPair<>(VALUE, ERROR_MSG);
-    }
 }
