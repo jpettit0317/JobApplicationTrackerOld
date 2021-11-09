@@ -6,10 +6,11 @@ import axios from "axios";
 const loginUser = async (login: Login): Promise<HttpResponse<string>> => {
     try {
         const response = await axios.post(URLPath.loginUser, login);
-        return new HttpResponse<string>(response.status, "", response.data);
+        const sessionId = response.data.value;
+        return new HttpResponse<string>(response.status, "", sessionId);
     } catch(error: any) {
         const statusCode = Number(error.response.status);
-        const reasonForFailure = String(error.response.data);
+        const reasonForFailure = String(error.response.data.message);
 
         return new HttpResponse<string>(statusCode, reasonForFailure, "");
     }
