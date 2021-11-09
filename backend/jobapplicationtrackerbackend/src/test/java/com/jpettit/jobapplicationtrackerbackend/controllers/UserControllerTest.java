@@ -1,7 +1,9 @@
 package com.jpettit.jobapplicationtrackerbackend.controllers;
 
+import com.jpettit.jobapplicationtrackerbackend.daos.UserDAO;
 import com.jpettit.jobapplicationtrackerbackend.enums.AppProperties;
-import com.jpettit.jobapplicationtrackerbackend.helpers.UserControllerURL;
+import com.jpettit.jobapplicationtrackerbackend.helpers.PasswordEncoder;
+import com.jpettit.jobapplicationtrackerbackend.models.Login;
 import com.jpettit.jobapplicationtrackerbackend.models.ResultPair;
 import com.jpettit.jobapplicationtrackerbackend.models.Session;
 import com.jpettit.jobapplicationtrackerbackend.models.User;
@@ -9,8 +11,6 @@ import com.jpettit.jobapplicationtrackerbackend.services.UserService;
 import testhelpers.JSONHelper;
 import testhelpers.UserControllerTestHelper;
 import testhelpers.UserControllerTestHelperVars;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,14 +22,9 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 @ExtendWith(SpringExtension.class)
@@ -74,9 +69,9 @@ class UserControllerTest {
 
         try {
             final UserControllerTestHelper<ResultPair<String>> CONTENTS = new UserControllerTestHelper<>();
-            CONTENTS.buildResult(mockMvc, USER, CREATED);
+            CONTENTS.buildResultForCreateUser(mockMvc, USER, CREATED);
             final String RESPONSE = CONTENTS.getResponse();
-            final ResultPair<String> ACTUAL = UserControllerTestHelperVars.convertJSONResponseToStringResultPair(RESPONSE);
+            final ResultPair<String> ACTUAL = JSONHelper.convertJSONResponseToStringResultPair(RESPONSE);
             CONTENTS.setActualAndExpected(PAIR, ACTUAL);
             CONTENTS.verifyEqual();
         } catch (Exception ex) {
@@ -94,9 +89,9 @@ class UserControllerTest {
 
         try {
             final UserControllerTestHelper<ResultPair<String>> CONTENTS = new UserControllerTestHelper<>();
-            CONTENTS.buildResult(mockMvc, USER, NOT_FOUND);
+            CONTENTS.buildResultForCreateUser(mockMvc, USER, NOT_FOUND);
             final String RESPONSE = CONTENTS.getResponse();
-            final ResultPair<String> ACTUAL = UserControllerTestHelperVars.convertJSONResponseToStringResultPair(RESPONSE);
+            final ResultPair<String> ACTUAL = JSONHelper.convertJSONResponseToStringResultPair(RESPONSE);
             CONTENTS.setActualAndExpected(PAIR, ACTUAL);
             CONTENTS.verifyEqual();
         } catch (Exception ex) {
@@ -114,9 +109,53 @@ class UserControllerTest {
 
         try {
             final UserControllerTestHelper<ResultPair<String>> CONTENTS = new UserControllerTestHelper<>();
-            CONTENTS.buildResult(mockMvc, USER, NOT_FOUND);
+            CONTENTS.buildResultForCreateUser(mockMvc, USER, NOT_FOUND);
             final String RESPONSE = CONTENTS.getResponse();
-            final ResultPair<String> ACTUAL = UserControllerTestHelperVars.convertJSONResponseToStringResultPair(RESPONSE);
+            final ResultPair<String> ACTUAL = JSONHelper.convertJSONResponseToStringResultPair(RESPONSE);
+            CONTENTS.setActualAndExpected(PAIR, ACTUAL);
+            CONTENTS.verifyEqual();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            Assertions.fail(ex.getMessage());
+        }
+    }
+
+    // loginUser tests
+    @Test
+    public void testLoginUser_whenGivenValidLogin_shouldReturnToken() {
+        final User USER = UserControllerTestHelperVars.createDefaultUser();
+        final Session SESSION = USER.getSession();
+        final Login LOGIN = Login.createLogin(USER.getUsername(), USER.getPassword());
+        final ResultPair<String> PAIR = new ResultPair<>(SESSION.getSessionName(), "");
+
+        Mockito.when(userService.validateUserLogin(Mockito.any(Login.class))).thenReturn(PAIR);
+
+        try {
+            final UserControllerTestHelper<ResultPair<String>> CONTENTS = new UserControllerTestHelper<>();
+            CONTENTS.buildResultForLoginUser(mockMvc, LOGIN, SUCCESS);
+            final String RESPONSE = CONTENTS.getResponse();
+            final ResultPair<String> ACTUAL = JSONHelper.convertJSONResponseToStringResultPair(RESPONSE);
+            CONTENTS.setActualAndExpected(PAIR, ACTUAL);
+            CONTENTS.verifyEqual();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            Assertions.fail(ex.getMessage());
+        }
+    }
+
+    @Test
+    public void testLoginUser_whenGivenLoginWhereUsernameDoesntExist_shouldReturnNoValueAndUserDoesntExist() {
+        final User USER = UserControllerTestHelperVars.createDefaultUser();
+        final Login LOGIN = Login.createLogin(USER.getUsername(), USER.getPassword());
+        final ResultPair<String> PAIR = new ResultPair<>("", "Username not found");
+
+        Mockito.when(userService.validateUserLogin(Mockito.any(Login.class))).thenReturn(PAIR);
+
+        try {
+            final UserControllerTestHelper<ResultPair<String>> CONTENTS = new UserControllerTestHelper<>();
+            CONTENTS.buildResultForLoginUser(mockMvc, LOGIN, NOT_FOUND);
+            final String RESPONSE = CONTENTS.getResponse();
+            final ResultPair<String> ACTUAL = JSONHelper.convertJSONResponseToStringResultPair(RESPONSE);
             CONTENTS.setActualAndExpected(PAIR, ACTUAL);
             CONTENTS.verifyEqual();
         } catch (Exception ex) {
