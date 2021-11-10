@@ -13,11 +13,7 @@ public class PasswordEncoder {
     private Integer hashRounds;
 
     public PasswordEncoder(@Value(AppProperties.roundCount) Integer rounds) {
-        if (Optional.ofNullable(rounds).isPresent()) {
-            hashRounds = rounds;
-        } else {
-            hashRounds = 12;
-        }
+        setHashRounds(rounds);
     }
 
     public Integer getHashRounds() {
@@ -25,7 +21,11 @@ public class PasswordEncoder {
     }
 
     public void setHashRounds(Integer hashRounds) {
-        this.hashRounds = hashRounds;
+        if (Optional.ofNullable(hashRounds).isPresent()) {
+            this.hashRounds = hashRounds;
+        } else {
+            this.hashRounds = 12;
+        }
     }
 
     public String hashPassword(String password) {
