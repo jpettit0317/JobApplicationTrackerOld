@@ -2,10 +2,9 @@ package com.jpettit.jobapplicationtrackerbackend.daos;
 
 import com.jpettit.jobapplicationtrackerbackend.database.JobAppTrackerConnection;
 import com.jpettit.jobapplicationtrackerbackend.enums.AppProperties;
-import com.jpettit.jobapplicationtrackerbackend.enums.JobApplicationFields;
-import com.jpettit.jobapplicationtrackerbackend.helpers.JobAppQuerier;
 import com.jpettit.jobapplicationtrackerbackend.helpers.ProjectEnvironment;
 import com.jpettit.jobapplicationtrackerbackend.helpers.ProjectEnvironmentReader;
+import com.jpettit.jobapplicationtrackerbackend.interfaces.DAO;
 import com.jpettit.jobapplicationtrackerbackend.models.JobApplication;
 import com.jpettit.jobapplicationtrackerbackend.models.JobApplicationCard;
 import com.jpettit.jobapplicationtrackerbackend.models.ResultPair;
@@ -13,16 +12,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
-import java.io.InputStream;
-import java.io.Reader;
-import java.math.BigDecimal;
-import java.net.URL;
 import java.sql.*;
-import java.sql.Date;
 import java.util.*;
 
 @Repository
-public class JobApplicationDAO implements DAO<JobApplication>{
+public class JobApplicationDAO implements DAO<JobApplication> {
     @Autowired
     JobApplicationDaoInfoBuilder builder;
 

@@ -1,6 +1,6 @@
 package com.jpettit.jobapplicationtrackerbackend.models;
 
-import com.jpettit.jobapplicationtrackerbackend.helpers.DaoPair;
+import com.jpettit.jobapplicationtrackerbackend.interfaces.DaoPair;
 
 public class UserServiceResultPair<T> implements DaoPair<T> {
     private T value;

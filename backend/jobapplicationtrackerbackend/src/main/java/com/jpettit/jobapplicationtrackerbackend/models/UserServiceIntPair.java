@@ -1,8 +1,6 @@
 package com.jpettit.jobapplicationtrackerbackend.models;
 
-import com.jpettit.jobapplicationtrackerbackend.helpers.DaoPair;
-
-import java.util.Optional;
+import com.jpettit.jobapplicationtrackerbackend.interfaces.DaoPair;
 
 public class UserServiceIntPair implements DaoPair<Integer> {
     private Integer count;

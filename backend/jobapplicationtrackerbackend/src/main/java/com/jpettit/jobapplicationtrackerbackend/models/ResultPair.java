@@ -1,6 +1,6 @@
 package com.jpettit.jobapplicationtrackerbackend.models;
 
-import com.jpettit.jobapplicationtrackerbackend.helpers.DaoPair;
+import com.jpettit.jobapplicationtrackerbackend.interfaces.DaoPair;
 
 import java.util.Objects;
 

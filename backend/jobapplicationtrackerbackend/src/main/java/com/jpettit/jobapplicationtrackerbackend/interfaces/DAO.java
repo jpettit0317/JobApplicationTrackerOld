@@ -1,4 +1,4 @@
-package com.jpettit.jobapplicationtrackerbackend.daos;
+package com.jpettit.jobapplicationtrackerbackend.interfaces;
 
 import java.sql.SQLException;
 import java.util.ArrayList;

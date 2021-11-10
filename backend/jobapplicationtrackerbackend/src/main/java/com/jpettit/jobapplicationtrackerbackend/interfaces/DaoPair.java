@@ -1,4 +1,4 @@
-package com.jpettit.jobapplicationtrackerbackend.helpers;
+package com.jpettit.jobapplicationtrackerbackend.interfaces;
 
 public interface DaoPair<T> {
     T getValue();

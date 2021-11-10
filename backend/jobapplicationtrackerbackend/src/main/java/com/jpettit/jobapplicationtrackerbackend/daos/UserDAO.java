@@ -1,12 +1,9 @@
 package com.jpettit.jobapplicationtrackerbackend.daos;
 
-import com.jpettit.jobapplicationtrackerbackend.database.JobAppTrackerConnection;
 import com.jpettit.jobapplicationtrackerbackend.enums.AppProperties;
-import com.jpettit.jobapplicationtrackerbackend.enums.UserFields;
-import com.jpettit.jobapplicationtrackerbackend.helpers.DateConverter;
 import com.jpettit.jobapplicationtrackerbackend.helpers.ProjectEnvironment;
 import com.jpettit.jobapplicationtrackerbackend.helpers.ProjectEnvironmentReader;
-import com.jpettit.jobapplicationtrackerbackend.helpers.UserQuerier;
+import com.jpettit.jobapplicationtrackerbackend.interfaces.DAO;
 import com.jpettit.jobapplicationtrackerbackend.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,8 +11,6 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Optional;
 
 @Repository
