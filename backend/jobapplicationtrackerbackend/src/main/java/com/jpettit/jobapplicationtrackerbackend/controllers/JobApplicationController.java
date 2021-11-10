@@ -1,7 +1,7 @@
 package com.jpettit.jobapplicationtrackerbackend.controllers;
 
 import com.jpettit.jobapplicationtrackerbackend.enums.AppProperties;
-import com.jpettit.jobapplicationtrackerbackend.helpers.JobApplicationURLS;
+import com.jpettit.jobapplicationtrackerbackend.enums.JobApplicationURLS;
 import com.jpettit.jobapplicationtrackerbackend.models.JobApplicationCard;
 import com.jpettit.jobapplicationtrackerbackend.models.ResultPair;
 import com.jpettit.jobapplicationtrackerbackend.services.JobApplicationService;

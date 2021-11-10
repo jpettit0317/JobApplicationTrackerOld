@@ -1,4 +1,4 @@
-package testhelpers;
+package testhelpers.helpervars;
 
 import java.sql.Date;
 import java.time.LocalDate;

@@ -1,6 +1,4 @@
-package testhelpers;
-
-import com.jpettit.jobapplicationtrackerbackend.helpers.ProjectEnvironment;
+package testhelpers.helpervars;
 
 public class ProjectEnvironmentReaderHelperVars {
     public final static String DEV_STR = "dev";

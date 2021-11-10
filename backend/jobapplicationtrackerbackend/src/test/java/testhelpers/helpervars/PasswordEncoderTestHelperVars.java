@@ -1,4 +1,4 @@
-package testhelpers;
+package testhelpers.helpervars;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 

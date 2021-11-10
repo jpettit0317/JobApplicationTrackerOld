@@ -3,10 +3,8 @@ package com.jpettit.jobapplicationtrackerbackend.helpers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import testhelpers.PasswordEncoderTestHelper;
-import testhelpers.PasswordEncoderTestHelperVars;
-
-import static org.junit.jupiter.api.Assertions.*;
+import testhelpers.helpers.PasswordEncoderTestHelper;
+import testhelpers.helpervars.PasswordEncoderTestHelperVars;
 
 class PasswordEncoderTest {
     private PasswordEncoder sut;

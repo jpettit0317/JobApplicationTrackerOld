@@ -1,6 +1,6 @@
 package com.jpettit.jobapplicationtrackerbackend.helpers;
 
-import com.jpettit.jobapplicationtrackerbackend.models.Session;
+import com.jpettit.jobapplicationtrackerbackend.enums.ProjectEnvironment;
 
 import java.util.HashMap;
 

@@ -3,14 +3,12 @@ package com.jpettit.jobapplicationtrackerbackend.helpers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import testhelpers.DateConverterTestHelper;
-import testhelpers.DateConverterTestVars;
+import testhelpers.helpers.DateConverterTestHelper;
+import testhelpers.helpervars.DateConverterTestVars;
 
 import java.sql.Date;
 import java.time.LocalDate;
 import java.time.Month;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class DateConverterTest {
    private DateConverterTestHelper<LocalDate> localDateHelper;

@@ -1,9 +1,6 @@
-package testhelpers;
+package testhelpers.helpers;
 
-import com.jpettit.jobapplicationtrackerbackend.helpers.ProjectEnvironment;
 import org.junit.jupiter.api.Assertions;
-
-import java.util.Optional;
 
 public class ProjectEnvironmentReaderTestHelper<Object> {
     private Object actualValue;

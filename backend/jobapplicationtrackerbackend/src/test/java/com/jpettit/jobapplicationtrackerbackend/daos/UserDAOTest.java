@@ -1,10 +1,10 @@
 package com.jpettit.jobapplicationtrackerbackend.daos;
 
 import com.jpettit.jobapplicationtrackerbackend.enums.AppProperties;
-import com.jpettit.jobapplicationtrackerbackend.helpers.ProjectEnvironment;
+import com.jpettit.jobapplicationtrackerbackend.enums.ProjectEnvironment;
 import com.jpettit.jobapplicationtrackerbackend.models.*;
 
-import testhelpers.UserDAOTestHelpers;
+import testhelpers.helpers.UserDAOTestHelpers;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -13,6 +13,7 @@ import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 import org.mockito.*;
+import testhelpers.helpervars.UserDAOTestHelperVars;
 
 import java.sql.*;
 import java.time.LocalDate;
@@ -61,44 +62,44 @@ class UserDAOTest {
     // insertOne tests
     @Test
     public void testInsertOne_whenPassedInUser_shouldReturnOne() throws SQLException {
-        users = UserDAOTestHelpers.createDefaultTestUsers();
+        users = UserDAOTestHelperVars.createDefaultTestUsers();
         final User USER = users.get(0);
         final Integer EXPECTED = 1;
         Mockito.when(builder.insertOne(USER)).thenReturn(EXPECTED);
 
         final Integer ACTUAL = sut.insertOne(USER);
         UserDAOTestHelpers.assertInsertCountsAreEqual(EXPECTED, ACTUAL);
-        Mockito.verify(builder, Mockito.times(UserDAOTestHelpers.CALL_COUNT)).insertOne(USER);
+        Mockito.verify(builder, Mockito.times(UserDAOTestHelperVars.CALL_COUNT)).insertOne(USER);
     }
 
     @Test
     public void testInsertOne_whenPassedInUserThatIsNull_shouldReturnZero() throws SQLException {
-        users = UserDAOTestHelpers.createDefaultTestUsers();
+        users = UserDAOTestHelperVars.createDefaultTestUsers();
         final Integer EXPECTED = 0;
         Mockito.when(builder.insertOne(null)).thenReturn(EXPECTED);
 
         final Integer ACTUAL = sut.insertOne(null);
         UserDAOTestHelpers.assertInsertCountsAreEqual(EXPECTED, ACTUAL);
-        Mockito.verify(builder, Mockito.times(UserDAOTestHelpers.CALL_COUNT)).insertOne(null);
+        Mockito.verify(builder, Mockito.times(UserDAOTestHelperVars.CALL_COUNT)).insertOne(null);
     }
 
     @Test
     public void testInsertOne_whenSQLExceptionIsThrown_shouldReturnZero() throws SQLException {
         final int EXPECTED = 0;
-        users = UserDAOTestHelpers.createDefaultTestUsers();
+        users = UserDAOTestHelperVars.createDefaultTestUsers();
         final User USER = users.get(0);
         Mockito.when(builder.insertOne(USER)).thenThrow(new SQLException(EXCEPTION_THROWN_ERR_MSG));
 
         final int ACTUAL = sut.insertOne(USER);
 
         UserDAOTestHelpers.assertInsertCountsAreEqual(EXPECTED, ACTUAL);
-        Mockito.verify(builder, Mockito.times(UserDAOTestHelpers.CALL_COUNT)).insertOne(USER);
+        Mockito.verify(builder, Mockito.times(UserDAOTestHelperVars.CALL_COUNT)).insertOne(USER);
     }
     // end of insertOne tests
     // getPasswordForUser tests
     @Test
     public void testGetPasswordForUser_WithValidLogin_ShouldReturnPasswordAndNoErrorMessage() throws SQLException {
-        users = UserDAOTestHelpers.createDefaultTestUsers();
+        users = UserDAOTestHelperVars.createDefaultTestUsers();
         final User USER = users.get(0);
         final Login LOGIN = Login.createLogin(USER.getUsername(), USER.getPassword());
         final ResultPair<String> PAIR = new ResultPair<>(USER.getPassword(), "");
@@ -108,12 +109,12 @@ class UserDAOTest {
         final ResultPair<String> ACTUAL_PAIR = sut.getPasswordForUser(LOGIN);
 
         UserDAOTestHelpers.assertStringResultPairsAreEqual(ACTUAL_PAIR, PAIR);
-        Mockito.verify(builder, Mockito.times(UserDAOTestHelpers.CALL_COUNT)).getPasswordByUsername(LOGIN);
+        Mockito.verify(builder, Mockito.times(UserDAOTestHelperVars.CALL_COUNT)).getPasswordByUsername(LOGIN);
     }
 
     @Test
     public void testGetPasswordForUser_WithNonExistantUser_ShouldReturnNoPasswordAndErrorMessage() throws SQLException {
-        final User USER = UserDAOTestHelpers.nonExistantUser2;
+        final User USER = UserDAOTestHelperVars.nonExistantUser2;
         final Login LOGIN = Login.createLogin(USER.getUsername(), USER.getPassword());
 
         Mockito.when(builder.getPasswordByUsername(LOGIN))
@@ -121,12 +122,12 @@ class UserDAOTest {
         final ResultPair<String> ACTUAL_PAIR = sut.getPasswordForUser(LOGIN);
 
         UserDAOTestHelpers.verifyErrorStringResultPair(ACTUAL_PAIR, EXCEPTION_THROWN_ERR_MSG);
-        Mockito.verify(builder, Mockito.times(UserDAOTestHelpers.CALL_COUNT)).getPasswordByUsername(LOGIN);
+        Mockito.verify(builder, Mockito.times(UserDAOTestHelperVars.CALL_COUNT)).getPasswordByUsername(LOGIN);
     }
 
     @Test
     public void testGetPasswordForUser_whenSQLExceptionIsThrown_shouldReturnEmptyValueAndExceptionThrownErrorMessage() throws SQLException {
-        final User USER = UserDAOTestHelpers.nonExistantUser;
+        final User USER = UserDAOTestHelperVars.nonExistantUser;
         final Login LOGIN = Login.createLogin(USER.getUsername(), USER.getPassword());
 
         Mockito.when(builder.getPasswordByUsername(LOGIN)).thenThrow(new SQLException(EXCEPTION_THROWN_ERR_MSG));
@@ -134,7 +135,7 @@ class UserDAOTest {
         final ResultPair<String> ACTUAL = sut.getPasswordForUser(LOGIN);
 
         UserDAOTestHelpers.verifyErrorStringResultPair(ACTUAL, EXCEPTION_THROWN_ERR_MSG);
-        Mockito.verify(builder, Mockito.times(UserDAOTestHelpers.CALL_COUNT)).getPasswordByUsername(LOGIN);
+        Mockito.verify(builder, Mockito.times(UserDAOTestHelperVars.CALL_COUNT)).getPasswordByUsername(LOGIN);
     }
     // end of getPasswordForUser tests
     // getUsernameBySessionId tests
@@ -150,7 +151,7 @@ class UserDAOTest {
 
     @Test
     public void testGetUsernameBySessionId_whenPassingInFirstId_shouldReturnResultPairWithU1AndNoErrorMessage() throws SQLException {
-        users = UserDAOTestHelpers.createDefaultTestUsers();
+        users = UserDAOTestHelperVars.createDefaultTestUsers();
         final User USER = users.get(0);
         final String SESSION_ID = USER.getSession().getSessionName();
         final ResultPair<String> EXPECTED_PAIR = new ResultPair<>(USER.getUsername(), "");
@@ -160,12 +161,12 @@ class UserDAOTest {
         ResultPair<String> ACTUAL_PAIR = sut.getUsernameBySessionId(SESSION_ID);
 
         UserDAOTestHelpers.assertResultPairAreEqual(ACTUAL_PAIR, EXPECTED_PAIR);
-        Mockito.verify(builder, Mockito.times(UserDAOTestHelpers.CALL_COUNT)).getUsernameBySessionId(SESSION_ID);
+        Mockito.verify(builder, Mockito.times(UserDAOTestHelperVars.CALL_COUNT)).getUsernameBySessionId(SESSION_ID);
     }
 
     @Test
     public void testGetUsernameBySessionId_whenPassingInThirdId_shouldReturnResultPairWithNoUsernameAndErrorMessageAsSessionIdDoesntExist() throws SQLException {
-        users = UserDAOTestHelpers.createDefaultTestUsers();
+        users = UserDAOTestHelperVars.createDefaultTestUsers();
 
         final String SESSION_ID = "third";
         ResultPair<String> EXPECTED_PAIR = new ResultPair<>("", sut.USERNAME_NOT_FOUND);
@@ -174,12 +175,12 @@ class UserDAOTest {
         ResultPair<String> ACTUAL_PAIR = sut.getUsernameBySessionId(SESSION_ID);
 
         UserDAOTestHelpers.assertResultPairAreEqual(ACTUAL_PAIR, EXPECTED_PAIR);
-        Mockito.verify(builder, Mockito.times(UserDAOTestHelpers.CALL_COUNT)).getUsernameBySessionId(SESSION_ID);
+        Mockito.verify(builder, Mockito.times(UserDAOTestHelperVars.CALL_COUNT)).getUsernameBySessionId(SESSION_ID);
     }
 
     @Test
     public void testGetUsernameBySessionId_whenSQLExceptionIsThrown_shouldReturnResultPairWithNoUsernameAndErrorMessage() throws SQLException {
-        users = UserDAOTestHelpers.createDefaultTestUsers();
+        users = UserDAOTestHelperVars.createDefaultTestUsers();
         final String SESSION_ID = "third";
         final SQLException SQL_EXECPTION = new SQLException(EXCEPTION_THROWN_ERR_MSG);
 
@@ -187,14 +188,14 @@ class UserDAOTest {
 
         ResultPair<String> ACTUAL_PAIR = sut.getUsernameBySessionId(SESSION_ID);
         UserDAOTestHelpers.verifyErrorStringResultPair(ACTUAL_PAIR, EXCEPTION_THROWN_ERR_MSG);
-        Mockito.verify(builder, Mockito.times(UserDAOTestHelpers.CALL_COUNT)).getUsernameBySessionId(SESSION_ID);
+        Mockito.verify(builder, Mockito.times(UserDAOTestHelperVars.CALL_COUNT)).getUsernameBySessionId(SESSION_ID);
     }
 
     // end of getUsernameBySessionId tests
     // getSessionExpDateBySessionId tests
     @Test
     public void testGetSessionExpDateBySessionId_whenPassingInFirstSessionId_shouldReturnJan12000() throws SQLException {
-        users = UserDAOTestHelpers.createDefaultTestUsers();
+        users = UserDAOTestHelperVars.createDefaultTestUsers();
 
         final Session SESSION = users.get(0).getSession();
         final LocalDate EXP_DATE = SESSION.getExpirationDate();
@@ -206,7 +207,7 @@ class UserDAOTest {
         final ResultPair<Optional<LocalDate>> ACTUAL_PAIR = sut.getSessionExpDateBySessionId(SESSION.getSessionName());
 
         UserDAOTestHelpers.assertLocalDateResultPair(ACTUAL_PAIR, EXPECTED_PAIR);
-        Mockito.verify(builder, Mockito.times(UserDAOTestHelpers.CALL_COUNT))
+        Mockito.verify(builder, Mockito.times(UserDAOTestHelperVars.CALL_COUNT))
                 .getSessionExpDateBySessionId(SESSION.getSessionName());
     }
 
@@ -220,7 +221,7 @@ class UserDAOTest {
         final ResultPair<Optional<LocalDate>> ACTUAL = sut.getSessionExpDateBySessionId(SESSION_ID);
 
         UserDAOTestHelpers.assertLocalDateResultPair(ACTUAL, EXPECTED);
-        Mockito.verify(builder, Mockito.times(UserDAOTestHelpers.CALL_COUNT))
+        Mockito.verify(builder, Mockito.times(UserDAOTestHelperVars.CALL_COUNT))
                 .getSessionExpDateBySessionId(SESSION_ID);
     }
 
@@ -244,14 +245,14 @@ class UserDAOTest {
         final ResultPair<Optional<LocalDate>> ACTUAL = sut.getSessionExpDateBySessionId(SESSION_ID);
 
         UserDAOTestHelpers.verifyErrorOptionalLocalDateResultPair(ACTUAL, EXCEPTION_THROWN_ERR_MSG);
-        Mockito.verify(builder, Mockito.times(UserDAOTestHelpers.CALL_COUNT))
+        Mockito.verify(builder, Mockito.times(UserDAOTestHelperVars.CALL_COUNT))
                 .getSessionExpDateBySessionId(SESSION_ID);
     }
     // end of getSessionExpDate tests
     // updateSession tests
     @Test
     public void testUpdateSession_whenGivenValidSession_shouldReturnOne() throws SQLException {
-        users = UserDAOTestHelpers.createDefaultTestUsers();
+        users = UserDAOTestHelperVars.createDefaultTestUsers();
         final String USERNAME = users.get(0).getUsername();
         final Session SESSION = users.get(0).getSession();
 
@@ -261,12 +262,12 @@ class UserDAOTest {
         final int EXPECTED = 1;
 
         UserDAOTestHelpers.assertInsertCountsAreEqual(EXPECTED, ACTUAL);
-        Mockito.verify(builder, Mockito.times(UserDAOTestHelpers.CALL_COUNT)).updateSession(USERNAME, SESSION);
+        Mockito.verify(builder, Mockito.times(UserDAOTestHelperVars.CALL_COUNT)).updateSession(USERNAME, SESSION);
     }
 
     @Test
     public void testUpdateSession_whenGivenInvalidSession_shouldReturnZero() throws SQLException {
-        users = UserDAOTestHelpers.createDefaultTestUsers();
+        users = UserDAOTestHelperVars.createDefaultTestUsers();
         final String USERNAME = users.get(0).getUsername();
         final Session SESSION = users.get(0).getSession();
 
@@ -282,7 +283,7 @@ class UserDAOTest {
 
     @Test
     public void testUpdateSession_whenSQLExceptionIsThrown_shouldReturnZero() throws SQLException {
-        users = UserDAOTestHelpers.createDefaultTestUsers();
+        users = UserDAOTestHelperVars.createDefaultTestUsers();
         final String USERNAME = users.get(0).getUsername();
         final Session SESSION = users.get(0).getSession();
         final SQLException EXCEPTION = new SQLException(EXCEPTION_THROWN_ERR_MSG);
@@ -299,7 +300,7 @@ class UserDAOTest {
 
     @Test
     public void testUpdateSession_whenPassedInEmptyUsername_shouldReturnZero() {
-        users = UserDAOTestHelpers.createDefaultTestUsers();
+        users = UserDAOTestHelperVars.createDefaultTestUsers();
         final String USERNAME = "";
         final Session SESSION = users.get(0).getSession();
 
@@ -311,7 +312,7 @@ class UserDAOTest {
 
     @Test
     public void testUpdateSession_whenPassedInNullSession_shouldReturnZero() {
-        users = UserDAOTestHelpers.createDefaultTestUsers();
+        users = UserDAOTestHelperVars.createDefaultTestUsers();
         final String USERNAME = users.get(0).getUsername();
         final Session SESSION = null;
 

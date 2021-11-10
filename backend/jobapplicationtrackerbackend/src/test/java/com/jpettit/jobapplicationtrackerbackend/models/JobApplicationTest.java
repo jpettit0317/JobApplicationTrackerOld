@@ -1,6 +1,6 @@
 package com.jpettit.jobapplicationtrackerbackend.models;
 
-import testhelpers.JobApplicationTestHelpers;
+import testhelpers.helpervars.JobApplicationTestHelpers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 

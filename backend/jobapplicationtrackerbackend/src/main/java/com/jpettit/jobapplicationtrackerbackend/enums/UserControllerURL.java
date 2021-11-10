@@ -1,4 +1,4 @@
-package com.jpettit.jobapplicationtrackerbackend.helpers;
+package com.jpettit.jobapplicationtrackerbackend.enums;
 
 public class UserControllerURL {
     public static final String addUser = "/api/user/createUser";

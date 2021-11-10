@@ -1,7 +1,5 @@
 package com.jpettit.jobapplicationtrackerbackend;
 
-import com.jpettit.jobapplicationtrackerbackend.helpers.ProjectEnvironmentReader;
-import com.jpettit.jobapplicationtrackerbackend.helpers.ProjectEnvironment;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;

@@ -1,16 +1,14 @@
 package com.jpettit.jobapplicationtrackerbackend.controllers;
 
-import com.jpettit.jobapplicationtrackerbackend.daos.UserDAO;
 import com.jpettit.jobapplicationtrackerbackend.enums.AppProperties;
-import com.jpettit.jobapplicationtrackerbackend.helpers.PasswordEncoder;
 import com.jpettit.jobapplicationtrackerbackend.models.Login;
 import com.jpettit.jobapplicationtrackerbackend.models.ResultPair;
 import com.jpettit.jobapplicationtrackerbackend.models.Session;
 import com.jpettit.jobapplicationtrackerbackend.models.User;
 import com.jpettit.jobapplicationtrackerbackend.services.UserService;
-import testhelpers.JSONHelper;
-import testhelpers.UserControllerTestHelper;
-import testhelpers.UserControllerTestHelperVars;
+import testhelpers.helpervars.JSONHelper;
+import testhelpers.helpers.UserControllerTestHelper;
+import testhelpers.helpervars.UserControllerTestHelperVars;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

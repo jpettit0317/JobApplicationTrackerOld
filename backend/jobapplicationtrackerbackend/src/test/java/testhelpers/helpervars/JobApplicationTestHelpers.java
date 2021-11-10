@@ -1,4 +1,4 @@
-package testhelpers;
+package testhelpers.helpervars;
 
 import com.jpettit.jobapplicationtrackerbackend.models.Interview;
 import com.jpettit.jobapplicationtrackerbackend.models.JobApplication;

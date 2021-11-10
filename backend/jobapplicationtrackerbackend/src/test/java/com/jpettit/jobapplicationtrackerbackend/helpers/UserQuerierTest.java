@@ -1,6 +1,7 @@
 package com.jpettit.jobapplicationtrackerbackend.helpers;
 
-import testhelpers.UserQuerierTestHelpers;
+import com.jpettit.jobapplicationtrackerbackend.enums.ProjectEnvironment;
+import testhelpers.helpervars.UserQuerierTestHelpers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

@@ -4,18 +4,16 @@ import com.jpettit.jobapplicationtrackerbackend.database.JobAppTrackerConnection
 import com.jpettit.jobapplicationtrackerbackend.enums.AppProperties;
 import com.jpettit.jobapplicationtrackerbackend.enums.UserFields;
 import com.jpettit.jobapplicationtrackerbackend.helpers.DateConverter;
-import com.jpettit.jobapplicationtrackerbackend.helpers.ProjectEnvironment;
+import com.jpettit.jobapplicationtrackerbackend.enums.ProjectEnvironment;
 import com.jpettit.jobapplicationtrackerbackend.helpers.ProjectEnvironmentReader;
 import com.jpettit.jobapplicationtrackerbackend.helpers.UserQuerier;
 import com.jpettit.jobapplicationtrackerbackend.models.Login;
 import com.jpettit.jobapplicationtrackerbackend.models.ResultPair;
 import com.jpettit.jobapplicationtrackerbackend.models.Session;
 import com.jpettit.jobapplicationtrackerbackend.models.User;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import javax.swing.plaf.nimbus.State;
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.Optional;

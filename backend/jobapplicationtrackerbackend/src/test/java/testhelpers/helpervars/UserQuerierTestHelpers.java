@@ -1,6 +1,6 @@
-package testhelpers;
+package testhelpers.helpervars;
 
-import com.jpettit.jobapplicationtrackerbackend.helpers.ProjectEnvironment;
+import com.jpettit.jobapplicationtrackerbackend.enums.ProjectEnvironment;
 import com.jpettit.jobapplicationtrackerbackend.helpers.UserQuerier;
 import com.jpettit.jobapplicationtrackerbackend.models.Session;
 import org.junit.jupiter.api.Assertions;

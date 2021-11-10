@@ -1,12 +1,11 @@
 package com.jpettit.jobapplicationtrackerbackend.helpers;
 
+import com.jpettit.jobapplicationtrackerbackend.enums.ProjectEnvironment;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import testhelpers.ProjectEnvironmentReaderHelperVars;
-import testhelpers.ProjectEnvironmentReaderTestHelper;
-
-import static org.junit.jupiter.api.Assertions.*;
+import testhelpers.helpervars.ProjectEnvironmentReaderHelperVars;
+import testhelpers.helpers.ProjectEnvironmentReaderTestHelper;
 
 class ProjectEnvironmentReaderTest {
     private ProjectEnvironmentReaderTestHelper<ProjectEnvironment> helper;

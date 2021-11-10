@@ -1,6 +1,6 @@
-package testhelpers;
+package testhelpers.helpers;
 
-import com.jpettit.jobapplicationtrackerbackend.helpers.UserControllerURL;
+import com.jpettit.jobapplicationtrackerbackend.enums.UserControllerURL;
 import com.jpettit.jobapplicationtrackerbackend.models.Login;
 import com.jpettit.jobapplicationtrackerbackend.models.User;
 import org.junit.jupiter.api.Assertions;
@@ -11,6 +11,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import testhelpers.helpervars.JSONHelper;
 
 import java.io.UnsupportedEncodingException;
 

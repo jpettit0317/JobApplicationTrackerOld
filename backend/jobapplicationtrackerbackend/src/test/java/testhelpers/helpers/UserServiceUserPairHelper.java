@@ -1,8 +1,9 @@
-package testhelpers;
+package testhelpers.helpers;
 
 import com.jpettit.jobapplicationtrackerbackend.models.Session;
 import com.jpettit.jobapplicationtrackerbackend.models.User;
 import com.jpettit.jobapplicationtrackerbackend.models.UserServiceUserPair;
+import testhelpers.helpers.TestPair;
 
 import java.time.LocalDate;
 import java.util.Optional;

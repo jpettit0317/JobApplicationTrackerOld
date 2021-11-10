@@ -1,22 +1,13 @@
-package testhelpers;
+package testhelpers.helpers;
 
 import com.jpettit.jobapplicationtrackerbackend.helpers.JobAppQuerier;
-import com.jpettit.jobapplicationtrackerbackend.helpers.ProjectEnvironment;
+import com.jpettit.jobapplicationtrackerbackend.enums.ProjectEnvironment;
 import com.jpettit.jobapplicationtrackerbackend.models.ResultPair;
 import org.junit.jupiter.api.Assertions;
 
 import java.util.HashMap;
 
 public class JobAppQuerierTestHelpers {
-    public static final ProjectEnvironment TEST_ENV = ProjectEnvironment.TEST;
-    public static final  ProjectEnvironment DEV_ENV = ProjectEnvironment.DEV;
-    public static final ProjectEnvironment PROD_ENV = ProjectEnvironment.PROD;
-
-    public static final String INVALID_USERNAME = "Username is empty";
-    private static final String INVALID_TABLENAME = "Table name is empty";
-
-    public static final String USER1 = "user1";
-
     public static JobAppQuerier createJobAppQuerier(ProjectEnvironment env) {
         return new JobAppQuerier(env);
     }

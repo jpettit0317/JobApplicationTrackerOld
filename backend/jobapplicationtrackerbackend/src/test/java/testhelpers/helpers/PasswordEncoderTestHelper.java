@@ -1,4 +1,4 @@
-package testhelpers;
+package testhelpers.helpers;
 
 import org.checkerframework.checker.units.qual.A;
 import org.junit.jupiter.api.Assertions;

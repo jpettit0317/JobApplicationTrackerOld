@@ -2,7 +2,7 @@ package com.jpettit.jobapplicationtrackerbackend.daos;
 
 import com.jpettit.jobapplicationtrackerbackend.database.JobAppTrackerConnection;
 import com.jpettit.jobapplicationtrackerbackend.enums.AppProperties;
-import com.jpettit.jobapplicationtrackerbackend.helpers.ProjectEnvironment;
+import com.jpettit.jobapplicationtrackerbackend.enums.ProjectEnvironment;
 import com.jpettit.jobapplicationtrackerbackend.helpers.ProjectEnvironmentReader;
 import com.jpettit.jobapplicationtrackerbackend.interfaces.DAO;
 import com.jpettit.jobapplicationtrackerbackend.models.JobApplication;

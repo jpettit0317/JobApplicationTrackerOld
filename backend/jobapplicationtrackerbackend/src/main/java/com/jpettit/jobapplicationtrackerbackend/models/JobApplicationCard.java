@@ -22,6 +22,15 @@ public class JobApplicationCard {
         return new JobApplicationCard(jobTitle, companyName, interviewCount, jobAppId);
     }
 
+    public static JobApplicationCard createFromJobApp(JobApplication JOBAPP) {
+        final Integer INTERVIEW_COUNT = JOBAPP.getInterviews().size();
+
+        return new JobApplicationCard(
+                JOBAPP.getJobAppTitle(), JOBAPP.getCompanyName(),
+                INTERVIEW_COUNT, JOBAPP.getId()
+        );
+    }
+
     public String getJobTitle() {
         return jobTitle;
     }

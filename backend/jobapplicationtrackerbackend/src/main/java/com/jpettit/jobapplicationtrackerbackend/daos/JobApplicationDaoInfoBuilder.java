@@ -4,7 +4,7 @@ import com.jpettit.jobapplicationtrackerbackend.database.JobAppTrackerConnection
 import com.jpettit.jobapplicationtrackerbackend.enums.AppProperties;
 import com.jpettit.jobapplicationtrackerbackend.enums.JobApplicationFields;
 import com.jpettit.jobapplicationtrackerbackend.helpers.JobAppQuerier;
-import com.jpettit.jobapplicationtrackerbackend.helpers.ProjectEnvironment;
+import com.jpettit.jobapplicationtrackerbackend.enums.ProjectEnvironment;
 import com.jpettit.jobapplicationtrackerbackend.helpers.ProjectEnvironmentReader;
 import com.jpettit.jobapplicationtrackerbackend.models.JobApplicationCard;
 import com.jpettit.jobapplicationtrackerbackend.models.ResultPair;

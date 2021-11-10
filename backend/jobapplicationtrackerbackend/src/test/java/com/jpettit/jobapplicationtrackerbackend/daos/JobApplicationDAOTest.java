@@ -2,8 +2,8 @@ package com.jpettit.jobapplicationtrackerbackend.daos;
 
 import com.jpettit.jobapplicationtrackerbackend.models.JobApplicationCard;
 import com.jpettit.jobapplicationtrackerbackend.models.ResultPair;
-import testhelpers.JobApplicationDAOTestHelper;
-import testhelpers.JobApplicationDAOTestHelperVars;
+import testhelpers.helpers.JobApplicationDAOTestHelper;
+import testhelpers.helpervars.JobApplicationDAOTestHelperVars;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

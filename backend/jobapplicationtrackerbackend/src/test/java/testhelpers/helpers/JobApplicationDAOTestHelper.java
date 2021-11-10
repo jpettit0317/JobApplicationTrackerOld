@@ -1,4 +1,4 @@
-package testhelpers;
+package testhelpers.helpers;
 
 import org.junit.jupiter.api.Assertions;
 
