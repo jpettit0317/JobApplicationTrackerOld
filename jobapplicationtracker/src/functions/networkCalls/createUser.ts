@@ -1,5 +1,4 @@
 import axios from "axios";
-import { error } from "console";
 import URLPath from "../../enums/URLPath_enum";
 import User from "../../models/User";
 import HttpResponse from "../../models/HttpResponse";

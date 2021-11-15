@@ -1,5 +1,4 @@
-import React from "react";
-import { AppBar, Toolbar, Typography, Button, IconButton } from "@material-ui/core";
+import { AppBar, Toolbar, Typography } from "@material-ui/core";
 import navBarStyles from "./navbarstyles";
 import NavBarProps from "./NavBarProps";
 
