@@ -1,4 +1,4 @@
-import axios, { AxiosResponse } from "axios";
+import axios from "axios";
 import URLPath from "../../enums/URLPath_enum"
 import HttpResponse from "../../models/HttpResponse";
 import IJobApp from "../../models/IJobApp";

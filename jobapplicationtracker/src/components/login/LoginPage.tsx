@@ -9,7 +9,7 @@ import LoginPageErrorPair from "../../models/LoginPageErrorPair";
 import Login from "../../models/Login";
 import loginUser from "../../functions/networkCalls/loginUser";
 import RoutePath from "../../enums/RoutePath_enum";
-import { deleteCookie, getCookie, setCookie } from "../../functions/utils/cookieUtil";
+import { setCookie } from "../../functions/utils/cookieUtil";
 
 const LoginPage: React.FC<LoginPageProps> = props => {
     const classes = loginStyles();

@@ -1,7 +1,4 @@
-import React from 'react';
-import logo from './logo.svg';
 import './App.css';
-import SignUpPage from './components/signup/SignUpPage';
 import RoutePath from './enums/RoutePath_enum';
 
 import { BrowserRouter, Route, Switch } from 'react-router-dom';

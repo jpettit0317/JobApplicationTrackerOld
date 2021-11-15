@@ -1,5 +1,4 @@
 import { Button, Card, CardActions, CardContent, Typography } from "@material-ui/core";
-import { PinDropSharp } from "@material-ui/icons";
 import IJobApp from "../../models/IJobApp";
 import JobAppCardProps from "./JobAppCardProps";
 import useJobAppCardStyles from "./JobAppCardStyles";
@@ -29,7 +28,7 @@ export const JobAppCard = (props: JobAppCardProps): JSX.Element => {
     }
 
     const getInterviews = (): string => {
-        if (props.jobApp.numberOfInterviews == 1) {
+        if (props.jobApp.numberOfInterviews === 1) {
             return `${props.jobApp.numberOfInterviews} interview`;
         } else {
             return `${props.jobApp.numberOfInterviews} interviews`;

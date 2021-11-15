@@ -5,16 +5,14 @@ import signUpStyles from "../../styles/signuppagestyles";
 import React, { useState } from "react";
 import { withRouter, Redirect } from "react-router-dom";
 
-import { Box, Grid, Container, TextField, makeStyles, Button, Typography, CssBaseline, Link} from "@material-ui/core"; 
+import { Grid, Container, TextField, Button, Typography, CssBaseline, Link} from "@material-ui/core"; 
 import NavBar from "../navbar/NavBar";
 import User from "../../models/User";
 import SignUpErrors from "../../models/SignUpErrors";
-import { ErrorSharp, RestoreOutlined } from "@material-ui/icons";
 import createUser from "../../functions/networkCalls/createUser";
-import { Alert } from "@material-ui/lab";
 import HttpResponse from "../../models/HttpResponse";
 import RoutePath from "../../enums/RoutePath_enum";
-import { getCookie, deleteCookie, setCookie } from "../../functions/utils/cookieUtil";
+import { setCookie } from "../../functions/utils/cookieUtil";
 
 const SignUpPage: React.FC<SignUpProps> = props => {
     const classes = signUpStyles();
@@ -179,7 +177,6 @@ const SignUpPage: React.FC<SignUpProps> = props => {
 
     const onSubmitButtonPressed = async () => {
         const user = new User(email, username, password);
-        const userAsString = JSON.stringify(user);
 
         const errors = user.validateUser(confirmPassword);
 
@@ -199,7 +196,7 @@ const SignUpPage: React.FC<SignUpProps> = props => {
 
     const handleCreateUser = async (user: User) => {
         try {
-            const response = await createUser(user);
+            const response: HttpResponse<string> = await createUser(user);
 
             console.log(`Response is ${JSON.stringify(response)}`);
             if (response.status >= 300) {

@@ -3,7 +3,7 @@ import { withRouter } from "react-router-dom";
 import { Button, Container, Grid } from "@material-ui/core";
 import IJobApp from "../../models/IJobApp";
 import { useEffect, useState } from "react";
-import { JobAppCard, displayJobAppCard } from "./JobAppCard";
+import { displayJobAppCard } from "./JobAppCard";
 import NavBar from "../navbar/NavBar";
 import useJobAppListStyles from "./JobAppListStyles";
 import getJobAppCard from "../../functions/networkCalls/getJobAppCard";
@@ -17,32 +17,29 @@ const JobAppList: React.FC<JobAppListProps> = props => {
     const [jobApps, setJobApps] = useState<IJobApp[]>(props.jobApps);
 
     useEffect( () => {
-        fetchData();
-    }, []);
-   
-    const fetchData = () => {
-        const sessionId = getCookie(CookieFields.sessionId);
-        handleData(sessionId ?? "");
-    }
+        const initData = (newJobApps: IJobApp[] = []) => {
+            setJobApps(newJobApps);
+        };
 
-    const handleData = async (sessionId: string) => {
-        try {
-            if (sessionId !== null && sessionId !== "") {
-                const response = await getJobAppCard(URLPath.getJobAppCard, sessionId);
-                if (response.data !== undefined) {
-                    initData(response.data);
+        const handleData = async (sessionId: string = "") => {
+            try {
+                if (sessionId !== null && sessionId !== "") {
+                    const response = await getJobAppCard(URLPath.getJobAppCard, sessionId);
+                    if (response.data !== undefined) {
+                        initData(response.data);
+                    }
+                } else {
+                    initData([]);
                 }
-            } else {
+            } catch (error: any) {
                 initData([]);
             }
-        } catch (error: any) {
-            initData([]);
-        }
-    }
+        };
 
-    const initData = (newJobApps: IJobApp[]) => {
-        setJobApps(newJobApps);
-    }
+        const ID: string = getCookie(CookieFields.sessionId) ?? "";
+
+        handleData(ID);
+    }, []);
 
     const onAddJobAppButtonPressed = () => {
 
