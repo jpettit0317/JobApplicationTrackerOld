@@ -1,7 +1,5 @@
 package com.jpettit.jobapplicationtrackerbackend.models;
 
-import javafx.util.converter.LocalDateStringConverter;
-
 import java.time.LocalDate;
 import java.util.Objects;
 import java.util.UUID;
