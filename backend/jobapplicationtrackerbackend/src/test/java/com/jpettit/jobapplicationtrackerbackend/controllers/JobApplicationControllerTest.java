@@ -116,7 +116,7 @@ class JobApplicationControllerTest {
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get(JobApplicationURLS.getJobAppCard, SESSION.getSessionName())
                         .accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
-                .andExpect(MockMvcResultMatchers.status().isNotFound())
+                .andExpect(MockMvcResultMatchers.status().isForbidden())
                 .andReturn();
 
         final String ACTUAL_RESPONSE = result.getResponse().getContentAsString();
