@@ -1,5 +1,5 @@
 import JobAppListProps from "./JobAppListProps";
-import { withRouter } from "react-router-dom";
+import { Redirect, withRouter } from "react-router-dom";
 import { Button, Container, Grid } from "@material-ui/core";
 import IJobApp from "../../models/IJobApp";
 import { useEffect, useState } from "react";
@@ -10,11 +10,15 @@ import getJobAppCard from "../../functions/networkCalls/getJobAppCard";
 import URLPath from "../../enums/URLPath_enum";
 import { getCookie } from "../../functions/utils/cookieUtil";
 import CookieFields from "../../enums/CookieFields_enum";
+import HttpStatusCode from "../../enums/HttpStatusCode_enum";
+import RoutePath from "../../enums/RoutePath_enum";
 
 const JobAppList: React.FC<JobAppListProps> = props => {
     const classes = useJobAppListStyles();
 
     const [jobApps, setJobApps] = useState<IJobApp[]>(props.jobApps);
+    const [shouldRedirect, setShouldRedirect] = useState(false);
+    const [redirectDestination, setRedirectDestination] = useState("");
 
     useEffect( () => {
         const initData = (newJobApps: IJobApp[] = []) => {
@@ -25,14 +29,18 @@ const JobAppList: React.FC<JobAppListProps> = props => {
             try {
                 if (sessionId !== null && sessionId !== "") {
                     const response = await getJobAppCard(URLPath.getJobAppCard, sessionId);
-                    if (response.data !== undefined) {
+                    if (response.data !== undefined && !response.isError()) {
                         initData(response.data);
+                    } else if (response.isStatusCodeEqual(HttpStatusCode.forbidden)) {
+                        console.log(`Session has expired`);
+                        initData();
+                        setRedirect({shouldRedirect: true, destination: RoutePath.login});
                     }
                 } else {
-                    initData([]);
+                    initData();
                 }
             } catch (error: any) {
-                initData([]);
+                initData();
             }
         };
 
@@ -43,6 +51,19 @@ const JobAppList: React.FC<JobAppListProps> = props => {
 
     const onAddJobAppButtonPressed = () => {
 
+    }
+
+    const setRedirect = (redirect: { shouldRedirect: boolean, destination: string }) => {
+        setShouldRedirect(redirect.shouldRedirect);
+        setRedirectDestination(redirect.destination);
+    }
+
+    const redirect = (): JSX.Element | null => {
+        if (shouldRedirect && redirectDestination !== "") {
+            return <Redirect to={redirectDestination} />
+        } else {
+            return null;
+        }
     }
 
     const onDeleteJobAppPressed = (index: number) => {
@@ -57,6 +78,7 @@ const JobAppList: React.FC<JobAppListProps> = props => {
     return (
         <div>
             <NavBar navBarTitle="JobApplicationTracker" />
+            {shouldRedirect && redirect()}
             <Container className={classes.cardGrid} maxWidth="md">
                 <Grid container spacing={4}>
                     <Grid item xs={12}>
